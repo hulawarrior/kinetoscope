@@ -5,8 +5,10 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Now Showing - Kinetoscope</title>
   <style>
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
+
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Inter', Arial, sans-serif; /* Use Inter as primary font */
       margin: 0;
       padding: 0;
       background-color: #000; /* Black background */
@@ -27,7 +29,6 @@
       display: flex;
       align-items: center;
       margin-bottom: 30px;
-      padding-bottom: 20px;
     }
     .filmItem img {
       width: 120px;
@@ -38,10 +39,12 @@
     }
     .filmItem h2 {
       color: #fff; /* Set titles to white */
+      font-weight: 600; /* Slightly bolder for titles */
       margin: 0 0 10px 0;
     }
     .filmItem p {
       color: #ddd; /* Slightly lighter text for descriptions */
+      font-weight: 400; /* Normal weight for descriptions */
     }
   </style>
 </head>
