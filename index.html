@@ -9,22 +9,41 @@
       font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
-      background-color: #f0f0f0;
-      color: #333;
+      background-color: #000; /* Black background */
+      color: #fff; /* White text for contrast */
     }
     h1 {
       text-align: center;
-      background-color: #444;
+      background-color: #222; /* Dark grey for the header */
       color: #fff;
       padding: 20px 0;
+      margin: 0;
     }
     #filmList {
       max-width: 800px;
       margin: 20px auto;
       padding: 20px;
-      background-color: #fff;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+    .filmItem {
+      display: flex;
+      align-items: center;
+      margin-bottom: 30px;
+      border-bottom: 1px solid #444; /* Dark grey border */
+      padding-bottom: 20px;
+    }
+    .filmItem img {
+      width: 120px;
+      height: 180px;
+      border-radius: 15px;
+      margin-right: 20px;
+      object-fit: cover;
+    }
+    .filmItem h2 {
+      color: #fff; /* Ensure title is white */
+      margin: 0;
+    }
+    .filmItem p {
+      color: #ddd; /* Slightly lighter text for descriptions */
     }
   </style>
 </head>
