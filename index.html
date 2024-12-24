@@ -42,31 +42,28 @@
       object-fit: cover;
     }
 
+    .filmItem h2 {
+      color: #fff !important; /* Ensure movie titles are white */
+      font-weight: 600; /* Slightly bolder for titles */
+      margin: 0 0 10px 0;
+    }
+
+    .filmItem p {
+      color: #ddd; /* Slightly lighter text for descriptions */
+      font-weight: 400; /* Normal weight for descriptions */
+    }
+
+    /* Ensure there are no dividing lines or borders */
     .filmItem + .filmItem {
-      border-top: none; /* Ensure no dividing lines */
+      border-top: none;
     }
   </style>
 </head>
 <body>
   <h1>Now Showing</h1>
   <div id="filmList">
-    <!-- Inline style to ensure titles are white -->
-    <div class="filmItem">
-      <img src="https://example.com/poster1.jpg" alt="Jaws" />
-      <div>
-        <h2 style="color: #fff;">Jaws</h2>
-        <p>Genre: Adventure</p>
-        <p>Synopsis: When a gigantic great white shark...</p>
-      </div>
-    </div>
-    <div class="filmItem">
-      <img src="https://example.com/poster2.jpg" alt="Casino Royale" />
-      <div>
-        <h2 style="color: #fff;">Casino Royale</h2>
-        <p>Genre: Action</p>
-        <p>Synopsis: After receiving a license to kill...</p>
-      </div>
-    </div>
+    Loading films...
   </div>
+  <script src="veezi-api.js"></script>
 </body>
 </html>
