@@ -33,7 +33,8 @@ async function fetchAndDisplayFilms() {
 
       // Add content to the film item
       filmItem.innerHTML = `
-        <img src="${film.FilmPosterThumbnailUrl}" alt="${film.Title}" style="width: 120px; height: 180px; border-radius: 10px; margin-right: 20px;">
+        <img src="${film.FilmPosterThumbnailUrl}" alt="${film.Title}" 
+             style="width: 120px; height: 180px; border-radius: 15px; margin-right: 20px; object-fit: cover;">
         <div>
           <h2 style="color: #333; margin: 0;">${film.Title}</h2>
           <p><strong>Genre:</strong> ${film.Genre || "Unknown"}</p>
