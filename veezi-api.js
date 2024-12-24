@@ -45,9 +45,9 @@ async function fetchShowtimes() {
 
         const showtimes = await response.json();
 
-        // Sort the showtimes by FeatureStartTime
+        // Sort the showtimes by PreShowStartTime
         const sortedShowtimes = showtimes.sort(
-            (a, b) => new Date(a.FeatureStartTime) - new Date(b.FeatureStartTime)
+            (a, b) => new Date(a.PreShowStartTime) - new Date(b.PreShowStartTime)
         );
 
         displayShowtimes(sortedShowtimes, filmsMap);
@@ -69,7 +69,7 @@ function displayShowtimes(showtimes, filmsMap) {
         const film = filmsMap[session.FilmId];
         const posterUrl = film?.FilmPosterThumbnailUrl || "https://via.placeholder.com/100x150?text=Poster";
         const filmTitle = `<strong>${session.Title}</strong>`;
-        const startTime = new Date(session.FeatureStartTime).toLocaleString();
+        const startTime = new Date(session.PreShowStartTime).toLocaleString();
 
         // Format showtime details with poster
         const formattedShowtime = `
