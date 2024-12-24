@@ -1,57 +1,68 @@
-const accessToken = "n06hg935gmg68bdv2526wkyjg4"; // Your Veezi access token
-const apiUrl = "https://api.uswest.veezi.com/v4/film"; // API endpoint
+const apiKey = "YOUR_API_KEY"; // Replace with your Veezi API key
+const sessionsUrl = "https://api.uswest.veezi.com/v1/session";
+const filmsUrl = "https://api.uswest.veezi.com/v4/film";
 
-async function fetchAndDisplayFilms() {
+// Fetch Films and Sessions
+async function fetchNowShowing() {
   try {
-    console.log("Fetching films from Veezi API...");
-    const response = await fetch(apiUrl, {
-      method: "GET",
-      headers: {
-        "VeeziAccessToken": accessToken,
-        "Content-Type": "application/json",
-      },
+    // Fetch sessions
+    const sessionsResponse = await fetch(sessionsUrl, {
+      headers: { VeeziAccessToken: apiKey },
+    });
+    const sessions = await sessionsResponse.json();
+
+    // Filter sessions with upcoming FeatureStartTime
+    const upcomingSessions = sessions.filter((session) => {
+      const featureStartTime = new Date(session.FeatureStartTime);
+      return featureStartTime > new Date();
     });
 
-    if (!response.ok) {
-      throw new Error(`Error: ${response.status} - ${response.statusText}`);
-    }
-
-    const films = await response.json(); // Parse JSON response
-    console.log("Films retrieved:", films);
-
-    const filmList = document.getElementById("filmList");
-    filmList.innerHTML = ""; // Clear any previous content
-
-    // Loop through each film and format its display
-    films.forEach((film) => {
-      const filmItem = document.createElement("div");
-      filmItem.style.display = "flex";
-      filmItem.style.alignItems = "center";
-      filmItem.style.marginBottom = "30px";
-      filmItem.style.borderBottom = "1px solid #ccc";
-      filmItem.style.paddingBottom = "20px";
-
-      // Add content to the film item
-      filmItem.innerHTML = `
-        <img src="${film.FilmPosterThumbnailUrl}" alt="${film.Title}" 
-             style="width: 120px; height: 180px; border-radius: 15px; margin-right: 20px; object-fit: cover;">
-        <div>
-          <h2 style="color: #333; margin: 0;">${film.Title}</h2>
-          <p><strong>Genre:</strong> ${film.Genre || "Unknown"}</p>
-          <p><strong>Synopsis:</strong> ${film.Synopsis || "No synopsis available."}</p>
-          <p><strong>Duration:</strong> ${film.Duration || "N/A"} minutes</p>
-          <p><strong>Rating:</strong> ${film.Rating || "Unrated"}</p>
-          <p><strong>Distributor:</strong> ${film.Distributor || "Unknown"}</p>
-        </div>
-      `;
-
-      filmList.appendChild(filmItem);
+    // Fetch films
+    const filmsResponse = await fetch(filmsUrl, {
+      headers: { VeeziAccessToken: apiKey },
     });
+    const films = await filmsResponse.json();
+
+    // Match films to sessions
+    const filmsWithShowtimes = upcomingSessions.map((session) => {
+      const film = films.find((film) => film.Id === session.FilmId);
+      return {
+        ...film,
+        FeatureStartTime: session.FeatureStartTime,
+        FilmFormat: session.FilmFormat,
+      };
+    });
+
+    displayFilms(filmsWithShowtimes);
   } catch (error) {
-    console.error("Error fetching films:", error);
-    document.getElementById("filmList").textContent = `Error: ${error.message}`;
+    console.error("Error fetching data:", error);
+    document.getElementById("filmList").innerHTML =
+      "<p>Error loading films. Please try again later.</p>";
   }
 }
 
-// Fetch and display films on page load
-document.addEventListener("DOMContentLoaded", fetchAndDisplayFilms);
+// Display Films
+function displayFilms(films) {
+  const filmList = document.getElementById("filmList");
+  filmList.innerHTML = ""; // Clear existing content
+
+  films.forEach((film) => {
+    const filmItem = document.createElement("div");
+    filmItem.className = "filmItem";
+
+    filmItem.innerHTML = `
+      <img src="${film.FilmPosterUrl || 'default-poster.png'}" alt="${film.Title}" />
+      <div class="filmDetails">
+        <h2>${film.Title}</h2>
+        <p>Genre: ${film.Genre}</p>
+        <p class="showtime">Showtime: ${new Date(film.FeatureStartTime).toLocaleString()}</p>
+        <p>Format: ${film.FilmFormat}</p>
+      </div>
+    `;
+
+    filmList.appendChild(filmItem);
+  });
+}
+
+// Initialize
+fetchNowShowing();

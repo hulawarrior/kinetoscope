@@ -3,12 +3,10 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Now Showing - Kinetoscope</title>
+  <title>Now Showing</title>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
-
     body {
-      font-family: 'Inter', Arial, sans-serif; /* Use Inter font */
+      font-family: Arial, sans-serif;
       margin: 0;
       padding: 0;
       background-color: #000; /* Black background */
@@ -17,53 +15,55 @@
 
     h1 {
       font-size: 2rem;
-      margin-left: 140px; /* Align "Now Showing" with the posters */
-      margin-bottom: 30px;
-      color: #fff; /* White title */
+      margin: 20px;
+      color: #fff;
     }
 
     #filmList {
       max-width: 800px;
-      margin: 0 auto;
+      margin: 20px auto;
       padding: 0 20px;
     }
 
     .filmItem {
       display: flex;
       align-items: center;
-      margin-bottom: 30px;
+      margin-bottom: 20px;
+      border-bottom: 1px solid #333;
+      padding-bottom: 10px;
     }
 
     .filmItem img {
-      width: 120px;
-      height: 180px;
-      border-radius: 15px;
+      width: 100px;
+      height: 150px;
       margin-right: 20px;
+      border-radius: 10px;
       object-fit: cover;
     }
 
-    .filmItem h2 {
-      color: #fff !important; /* Ensure movie titles are white */
-      font-weight: 600; /* Slightly bolder for titles */
-      margin: 0 0 10px 0;
+    .filmDetails {
+      flex: 1;
     }
 
-    .filmItem p {
-      color: #ddd; /* Slightly lighter text for descriptions */
-      font-weight: 400; /* Normal weight for descriptions */
+    .filmDetails h2 {
+      margin: 0 0 10px;
+      font-size: 1.5rem;
+      color: #fff;
     }
 
-    /* Ensure there are no dividing lines or borders */
-    .filmItem + .filmItem {
-      border-top: none;
+    .filmDetails p {
+      margin: 5px 0;
+      color: #ccc;
+    }
+
+    .filmDetails .showtime {
+      color: #00ff00; /* Highlight showtimes in green */
     }
   </style>
 </head>
 <body>
   <h1>Now Showing</h1>
-  <div id="filmList">
-    Loading films...
-  </div>
+  <div id="filmList">Loading films...</div>
   <script src="veezi-api.js"></script>
 </body>
 </html>
