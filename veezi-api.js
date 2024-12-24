@@ -16,7 +16,13 @@ async function fetchShowtimes() {
         }
 
         const showtimes = await response.json();
-        displayShowtimes(showtimes);
+        
+        // Sort the showtimes by FeatureStartTime
+        const sortedShowtimes = showtimes.sort(
+            (a, b) => new Date(a.FeatureStartTime) - new Date(b.FeatureStartTime)
+        );
+
+        displayShowtimes(sortedShowtimes);
     } catch (error) {
         console.error("Failed to fetch showtimes:", error);
         document.getElementById("showtimes-list").innerHTML =
