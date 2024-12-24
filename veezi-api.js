@@ -1,3 +1,6 @@
+const apiKey = "n06hg935gmg68bdv2526wkyjg4"; // Replace with your actual API key
+const apiUrl = "https://api.uswest.veezi.com/v1/session"; // Showtimes endpoint
+
 async function fetchShowtimes() {
     try {
         const response = await fetch(apiUrl, {
@@ -9,18 +12,32 @@ async function fetchShowtimes() {
         });
 
         if (!response.ok) {
-            throw new Error(`Error: ${response.status} - ${response.statusText}`);
+            throw new Error(Error: ${response.status} - ${response.statusText});
         }
 
-        let showtimes = await response.json();
-
-        // Sort the showtimes by playtime (soonest first)
-        showtimes.sort((a, b) => new Date(a.FeatureStartTime) - new Date(b.FeatureStartTime));
-
-        // Display sorted showtimes
+        const showtimes = await response.json();
         displayShowtimes(showtimes);
     } catch (error) {
         console.error("Failed to fetch showtimes:", error);
-        document.getElementById("showtimes-list").innerHTML = `<li>Error loading showtimes. Please try again later.</li>`;
+        document.getElementById("showtimes-list").innerHTML = <li>Error loading showtimes. Please try again later.</li>;
     }
 }
+
+function displayShowtimes(showtimes) {
+    const list = document.getElementById("showtimes-list");
+
+    showtimes.forEach((session) => {
+        const showtimeItem = document.createElement("li");
+
+        // Format showtime details
+        const filmTitle = <strong>${session.Title}</strong>;
+        const startTime = new Date(session.FeatureStartTime).toLocaleString();
+        const formattedShowtime = <p>${filmTitle} - ${startTime}</p>;
+
+        showtimeItem.innerHTML = formattedShowtime;
+        list.appendChild(showtimeItem);
+    });
+}
+
+// Fetch showtimes on page load
+fetchShowtimes();
