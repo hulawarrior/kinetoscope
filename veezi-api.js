@@ -1,49 +1,24 @@
-const apiKey = "n06hg935gmg68bdv2526wkyjg4"; // Replace with your actual API key
-const apiUrl = "https://api.uswest.veezi.com/v4/film"; // Films endpoint
+const apiKey = "n06hg935gmg68bdv2526wkyjg4"; // Your Veezi API key
+const apiUrl = "https://api.uswest.veezi.com/v4/film"; // Simplest endpoint
 
-// Function to fetch films
-async function fetchFilms() {
+async function testVeeziConnection() {
   try {
     const response = await fetch(apiUrl, {
       method: "GET",
       headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
+        Authorization: `Bearer ${apiKey}`, // Only essential header
       },
     });
 
-    if (!response.ok) {
-      throw new Error(`Error: ${response.status} - ${response.statusText}`);
-    }
-
-    const films = await response.json();
-    displayFilms(films);
+    console.log("Response status:", response.status); // Log status code
+    const data = await response.json(); // Parse the response as JSON
+    console.log("Response data:", data); // Log the data
+    document.getElementById("testResult").textContent = `Success: ${JSON.stringify(data)}`;
   } catch (error) {
-    console.error("Failed to fetch films:", error);
+    console.error("Failed to connect to Veezi API:", error);
+    document.getElementById("testResult").textContent = `Error: ${error.message}`;
   }
 }
 
-// Function to display films
-function displayFilms(films) {
-  const filmList = document.getElementById("filmList");
-  filmList.innerHTML = ""; // Clear existing content
-
-  if (!films || films.length === 0) {
-    filmList.innerHTML = "<li>No films available.</li>";
-    return;
-  }
-
-  films.forEach((film) => {
-    const listItem = document.createElement("li");
-    listItem.innerHTML = `
-      <h3>${film.Title}</h3>
-      <img src="${film.FilmPosterThumbnailUrl || ''}" alt="${film.Title}" style="width: 100px; height: auto;">
-      <p><strong>Genre:</strong> ${film.Genre}</p>
-      <p><strong>Synopsis:</strong> ${film.Synopsis}</p>
-    `;
-    filmList.appendChild(listItem);
-  });
-}
-
-// Fetch and display films on page load
-document.addEventListener("DOMContentLoaded", fetchFilms);
+// Run the test when the page loads
+document.addEventListener("DOMContentLoaded", testVeeziConnection);
