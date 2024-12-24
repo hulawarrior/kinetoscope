@@ -3,11 +3,31 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Veezi Films</title>
+  <title>Now Showing - Kinetoscope</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f0f0f0;
+      color: #333;
+    }
+    h1 {
+      text-align: center;
+      background-color: #444;
+      color: #fff;
+      padding: 20px 0;
+    }
+    #filmList {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+  </style>
 </head>
-<body style="text-align: center; font-family: Arial, sans-serif;">
+<body>
   <h1>Now Showing</h1>
-  <div id="filmList" style="margin: 0 auto; max-width: 600px;">
+  <div id="filmList">
     Loading films...
   </div>
   <script src="veezi-api.js"></script>
