@@ -25,22 +25,23 @@ async function fetchAndDisplayFilms() {
     // Loop through each film and format its display
     films.forEach((film) => {
       const filmItem = document.createElement("div");
-      filmItem.style.border = "1px solid #ccc";
-      filmItem.style.margin = "20px";
-      filmItem.style.padding = "10px";
-      filmItem.style.borderRadius = "5px";
-      filmItem.style.backgroundColor = "#f9f9f9";
+      filmItem.style.display = "flex";
+      filmItem.style.alignItems = "center";
+      filmItem.style.marginBottom = "30px";
+      filmItem.style.borderBottom = "1px solid #ccc";
+      filmItem.style.paddingBottom = "20px";
 
       // Add content to the film item
       filmItem.innerHTML = `
-        <h2 style="color: #333;">${film.Title}</h2>
-        <img src="${film.FilmPosterThumbnailUrl}" alt="${film.Title}" style="width: 150px; height: auto; float: left; margin-right: 15px;">
-        <p><strong>Genre:</strong> ${film.Genre || "Unknown"}</p>
-        <p><strong>Synopsis:</strong> ${film.Synopsis || "No synopsis available."}</p>
-        <p><strong>Duration:</strong> ${film.Duration || "N/A"} minutes</p>
-        <p><strong>Rating:</strong> ${film.Rating || "Unrated"}</p>
-        <p><strong>Distributor:</strong> ${film.Distributor || "Unknown"}</p>
-        <div style="clear: both;"></div>
+        <img src="${film.FilmPosterThumbnailUrl}" alt="${film.Title}" style="width: 120px; height: 180px; border-radius: 10px; margin-right: 20px;">
+        <div>
+          <h2 style="color: #333; margin: 0;">${film.Title}</h2>
+          <p><strong>Genre:</strong> ${film.Genre || "Unknown"}</p>
+          <p><strong>Synopsis:</strong> ${film.Synopsis || "No synopsis available."}</p>
+          <p><strong>Duration:</strong> ${film.Duration || "N/A"} minutes</p>
+          <p><strong>Rating:</strong> ${film.Rating || "Unrated"}</p>
+          <p><strong>Distributor:</strong> ${film.Distributor || "Unknown"}</p>
+        </div>
       `;
 
       filmList.appendChild(filmItem);
