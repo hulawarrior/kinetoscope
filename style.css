@@ -4,50 +4,28 @@ body {
     color: #fff;
     margin: 0;
     padding: 0;
-    text-align: center;
 }
 
-h1 {
-    font-size: 2em;
-    margin: 20px;
-}
-
-#showtimes {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+.container {
+    width: 80%;
+    margin: 0 auto;
     padding: 20px;
 }
 
-.showtime {
-    display: flex;
-    align-items: center;
-    background-color: #111;
+h1 {
+    text-align: center;
+    font-size: 2rem;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+li {
+    border: 1px solid #333;
     border-radius: 8px;
     margin: 10px 0;
-    padding: 10px;
-    width: 90%;
-    max-width: 600px;
-}
-
-.poster {
-    width: 100px;
-    height: auto;
-    border-radius: 8px;
-    margin-right: 20px;
-}
-
-.details {
-    text-align: left;
-}
-
-.details h3 {
-    margin: 0;
-    font-size: 1.5em;
-    color: #fff;
-}
-
-.details p {
-    margin: 5px 0;
-    color: #ccc;
+    padding: 15px;
+    background-color: #111;
 }

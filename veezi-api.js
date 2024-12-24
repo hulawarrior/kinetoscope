@@ -1,11 +1,9 @@
-const apiKey = "your-veezi-access-token"; // Replace with your Veezi API token
-const apiUrlSessions = "https://api.uswest.veezi.com/v1/session"; // Veezi sessions endpoint
-const apiUrlFilms = "https://api.uswest.veezi.com/v4/film"; // Veezi films endpoint
+const apiKey = "n06hg935gmg68bdv2526wkyjg4"; // Replace with your actual API key
+const apiUrl = "https://api.uswest.veezi.com/v1/session"; // Showtimes endpoint
 
-async function fetchUpcomingShowtimes() {
+async function fetchShowtimes() {
     try {
-        // Fetch all sessions
-        const response = await fetch(apiUrlSessions, {
+        const response = await fetch(apiUrl, {
             method: "GET",
             headers: {
                 "VeeziAccessToken": apiKey,
@@ -14,77 +12,32 @@ async function fetchUpcomingShowtimes() {
         });
 
         if (!response.ok) {
-            throw new Error(`Failed to fetch sessions: ${response.statusText}`);
+            throw new Error(`Error: ${response.status} - ${response.statusText}`);
         }
 
-        let sessions = await response.json();
-
-        // Filter sessions with valid CleanupEndTime
-        const now = new Date();
-        sessions = sessions.filter(session => new Date(session.CleanupEndTime) > now);
-
-        // Sort sessions by FeatureStartTime
-        sessions.sort((a, b) => new Date(a.FeatureStartTime) - new Date(b.FeatureStartTime));
-
-        // Fetch film details and render showtimes
-        const filmsResponse = await fetch(apiUrlFilms, {
-            method: "GET",
-            headers: {
-                "VeeziAccessToken": apiKey,
-                "Content-Type": "application/json",
-            },
-        });
-
-        if (!filmsResponse.ok) {
-            throw new Error(`Failed to fetch films: ${filmsResponse.statusText}`);
-        }
-
-        const films = await filmsResponse.json();
-        const filmsMap = new Map(films.map(film => [film.Id, film]));
-
-        renderShowtimes(sessions, filmsMap);
+        const showtimes = await response.json();
+        displayShowtimes(showtimes);
     } catch (error) {
-        console.error(error);
-        document.getElementById("showtimes").innerHTML = `<p>Error loading showtimes. Please try again later.</p>`;
+        console.error("Failed to fetch showtimes:", error);
+        document.getElementById("showtimes-list").innerHTML = `<li>Error loading showtimes. Please try again later.</li>`;
     }
 }
 
-function renderShowtimes(sessions, filmsMap) {
-    const showtimesContainer = document.getElementById("showtimes");
-    showtimesContainer.innerHTML = ""; // Clear previous content
+function displayShowtimes(showtimes) {
+    const list = document.getElementById("showtimes-list");
 
-    sessions.forEach(session => {
-        const film = filmsMap.get(session.FilmId);
+    showtimes.forEach((session) => {
+        const showtimeItem = document.createElement("li");
 
-        // Create showtime item
-        const showtimeItem = document.createElement("div");
-        showtimeItem.classList.add("showtime");
+        // Format showtime details
+        const filmTitle = `<strong>${session.Title}</strong>`;
+        const startTime = new Date(session.FeatureStartTime).toLocaleString();
+        const formattedShowtime = `<p>${filmTitle} - ${startTime}</p>`;
 
-        // Add film poster
-        if (film?.FilmPosterThumbnailUrl) {
-            const poster = document.createElement("img");
-            poster.src = film.FilmPosterThumbnailUrl;
-            poster.alt = film.Title;
-            poster.classList.add("poster");
-            showtimeItem.appendChild(poster);
-        }
-
-        // Add film details
-        const details = document.createElement("div");
-        details.classList.add("details");
-
-        const title = document.createElement("h3");
-        title.textContent = film?.Title || "Unknown Title";
-        details.appendChild(title);
-
-        const time = document.createElement("p");
-        time.textContent = new Date(session.FeatureStartTime).toLocaleString();
-        details.appendChild(time);
-
-        showtimeItem.appendChild(details);
-        showtimesContainer.appendChild(showtimeItem);
+        showtimeItem.innerHTML = formattedShowtime;
+        list.appendChild(showtimeItem);
     });
 }
 
-// Initialize fetch
-fetchUpcomingShowtimes();
+// Fetch showtimes on page load
+fetchShowtimes();
