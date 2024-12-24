@@ -58,6 +58,15 @@ async function fetchShowtimes() {
     }
 }
 
+function formatTime(dateString) {
+    const options = { 
+        hour: '2-digit', 
+        minute: '2-digit', 
+        hour12: true // Use 12-hour format (change to false for 24-hour format)
+    };
+    return new Intl.DateTimeFormat('en-US', options).format(new Date(dateString));
+}
+
 function displayShowtimes(showtimes, filmsMap) {
     const list = document.getElementById("showtimes-list");
     list.innerHTML = ""; // Clear existing items
@@ -69,7 +78,7 @@ function displayShowtimes(showtimes, filmsMap) {
         const film = filmsMap[session.FilmId];
         const posterUrl = film?.FilmPosterThumbnailUrl || "https://via.placeholder.com/100x150?text=Poster";
         const filmTitle = `<strong>${session.Title}</strong>`;
-        const startTime = new Date(session.PreShowStartTime).toLocaleString();
+        const startTime = formatTime(session.PreShowStartTime); // Use PreShowStartTime and formatted time
 
         // Format showtime details with poster
         const formattedShowtime = `
