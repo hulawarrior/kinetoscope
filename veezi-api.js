@@ -1,15 +1,13 @@
-// Your API key from Veezi
-const apiKey = "n06hg935gmg68bdv2526wkyjg4";
+const apiKey = "n06hg935gmg68bdv2526wkyjg4"; // Replace with your actual API key
+const apiUrl = "https://api.uswest.veezi.com/v4/film"; // Films endpoint
 
-// Veezi API endpoint for showtimes (replace with the actual endpoint)
-const apiUrl = "https://api.uswest.veezi.com/showtimes";
-
-async function fetchShowtimes() {
+// Function to fetch films
+async function fetchFilms() {
   try {
     const response = await fetch(apiUrl, {
       method: "GET",
       headers: {
-        "Authorization": `Bearer ${apiKey}`, // Add the API key here
+        Authorization: `Bearer ${apiKey}`,
         "Content-Type": "application/json",
       },
     });
@@ -18,28 +16,34 @@ async function fetchShowtimes() {
       throw new Error(`Error: ${response.status} - ${response.statusText}`);
     }
 
-    const data = await response.json();
-    displayShowtimes(data); // Call a function to display the fetched data
+    const films = await response.json();
+    displayFilms(films);
   } catch (error) {
-    console.error("Failed to fetch showtimes:", error);
+    console.error("Failed to fetch films:", error);
   }
 }
 
-function displayShowtimes(showtimes) {
-  const showtimesList = document.getElementById("showtimesList");
-  showtimesList.innerHTML = ""; // Clear any existing data
+// Function to display films
+function displayFilms(films) {
+  const filmList = document.getElementById("filmList");
+  filmList.innerHTML = ""; // Clear existing content
 
-  if (!showtimes || showtimes.length === 0) {
-    showtimesList.innerHTML = "<li>No showtimes available.</li>";
+  if (!films || films.length === 0) {
+    filmList.innerHTML = "<li>No films available.</li>";
     return;
   }
 
-  showtimes.forEach((showtime) => {
+  films.forEach((film) => {
     const listItem = document.createElement("li");
-    listItem.textContent = `${showtime.movieTitle} - ${showtime.showDateTime}`;
-    showtimesList.appendChild(listItem);
+    listItem.innerHTML = `
+      <h3>${film.Title}</h3>
+      <img src="${film.FilmPosterThumbnailUrl || ''}" alt="${film.Title}" style="width: 100px; height: auto;">
+      <p><strong>Genre:</strong> ${film.Genre}</p>
+      <p><strong>Synopsis:</strong> ${film.Synopsis}</p>
+    `;
+    filmList.appendChild(listItem);
   });
 }
 
-// Fetch showtimes when the page loads
-document.addEventListener("DOMContentLoaded", fetchShowtimes);
+// Fetch and display films on page load
+document.addEventListener("DOMContentLoaded", fetchFilms);
