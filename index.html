@@ -8,28 +8,32 @@
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap');
 
     body {
-      font-family: 'Inter', Arial, sans-serif; /* Use Inter as primary font */
+      font-family: 'Inter', Arial, sans-serif; /* Use Inter font */
       margin: 0;
       padding: 0;
       background-color: #000; /* Black background */
       color: #fff; /* White text for contrast */
     }
+
     h1 {
       font-size: 2rem;
       margin-left: 140px; /* Align "Now Showing" with the posters */
       margin-bottom: 30px;
       color: #fff; /* White title */
     }
+
     #filmList {
       max-width: 800px;
       margin: 0 auto;
       padding: 0 20px;
     }
+
     .filmItem {
       display: flex;
       align-items: center;
       margin-bottom: 30px;
     }
+
     .filmItem img {
       width: 120px;
       height: 180px;
@@ -37,14 +41,21 @@
       margin-right: 20px;
       object-fit: cover;
     }
+
     .filmItem h2 {
-      color: #fff; /* Set titles to white */
+      color: #fff !important; /* Ensure movie titles are white */
       font-weight: 600; /* Slightly bolder for titles */
       margin: 0 0 10px 0;
     }
+
     .filmItem p {
       color: #ddd; /* Slightly lighter text for descriptions */
       font-weight: 400; /* Normal weight for descriptions */
+    }
+
+    /* Ensure there are no dividing lines or borders */
+    .filmItem + .filmItem {
+      border-top: none;
     }
   </style>
 </head>
