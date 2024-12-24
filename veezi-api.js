@@ -1,68 +1,78 @@
-const apiKey = "YOUR_API_KEY"; // Replace with your Veezi API key
-const sessionsUrl = "https://api.uswest.veezi.com/v1/session";
-const filmsUrl = "https://api.uswest.veezi.com/v4/film";
+const filmsApiUrl = "https://api.uswest.veezi.com/v4/film";
+const sessionsApiUrl = "https://api.uswest.veezi.com/v1/session";
+const accessToken = "your-access-token";
 
-// Fetch Films and Sessions
-async function fetchNowShowing() {
+async function fetchData() {
+  const filmResponse = await fetch(filmsApiUrl, {
+    headers: { "VeeziAccessToken": accessToken },
+  });
+  const sessionResponse = await fetch(sessionsApiUrl, {
+    headers: { "VeeziAccessToken": accessToken },
+  });
+
+  if (!filmResponse.ok || !sessionResponse.ok) {
+    throw new Error("Failed to load data");
+  }
+
+  const films = await filmResponse.json();
+  const sessions = await sessionResponse.json();
+
+  return { films, sessions };
+}
+
+function renderFilms(films, sessions) {
+  const filmList = document.getElementById("film-list");
+  filmList.innerHTML = "";
+
+  // Match sessions with films
+  films.forEach((film) => {
+    const filmSessions = sessions.filter(
+      (session) =>
+        session.FilmId === film.Id && new Date(session.FeatureStartTime) > new Date()
+    );
+
+    if (filmSessions.length > 0) {
+      // Create a card for each session
+      filmSessions.forEach((session) => {
+        const filmCard = document.createElement("div");
+        filmCard.className = "film-card";
+        const sessionDate = new Date(session.FeatureStartTime);
+        const dateString = sessionDate.toLocaleDateString("en-US", {
+          weekday: "short",
+          month: "short",
+          day: "numeric",
+        });
+        const timeString = session.TicketsSoldOut
+          ? "Sold Out"
+          : sessionDate.toLocaleTimeString("en-US", {
+              hour: "numeric",
+              minute: "2-digit",
+            });
+
+        filmCard.innerHTML = `
+          <img src="${film.FilmPosterUrl}" alt="${film.Title} Poster" />
+          <div class="film-info">
+            <h2>${film.Title}</h2>
+            <p>${dateString}</p>
+            <span class="showtime">${timeString}</span>
+          </div>
+        `;
+
+        filmList.appendChild(filmCard);
+      });
+    }
+  });
+}
+
+async function init() {
   try {
-    // Fetch sessions
-    const sessionsResponse = await fetch(sessionsUrl, {
-      headers: { VeeziAccessToken: apiKey },
-    });
-    const sessions = await sessionsResponse.json();
-
-    // Filter sessions with upcoming FeatureStartTime
-    const upcomingSessions = sessions.filter((session) => {
-      const featureStartTime = new Date(session.FeatureStartTime);
-      return featureStartTime > new Date();
-    });
-
-    // Fetch films
-    const filmsResponse = await fetch(filmsUrl, {
-      headers: { VeeziAccessToken: apiKey },
-    });
-    const films = await filmsResponse.json();
-
-    // Match films to sessions
-    const filmsWithShowtimes = upcomingSessions.map((session) => {
-      const film = films.find((film) => film.Id === session.FilmId);
-      return {
-        ...film,
-        FeatureStartTime: session.FeatureStartTime,
-        FilmFormat: session.FilmFormat,
-      };
-    });
-
-    displayFilms(filmsWithShowtimes);
+    const { films, sessions } = await fetchData();
+    renderFilms(films, sessions);
   } catch (error) {
-    console.error("Error fetching data:", error);
-    document.getElementById("filmList").innerHTML =
+    console.error(error);
+    document.getElementById("film-list").innerHTML =
       "<p>Error loading films. Please try again later.</p>";
   }
 }
 
-// Display Films
-function displayFilms(films) {
-  const filmList = document.getElementById("filmList");
-  filmList.innerHTML = ""; // Clear existing content
-
-  films.forEach((film) => {
-    const filmItem = document.createElement("div");
-    filmItem.className = "filmItem";
-
-    filmItem.innerHTML = `
-      <img src="${film.FilmPosterUrl || 'default-poster.png'}" alt="${film.Title}" />
-      <div class="filmDetails">
-        <h2>${film.Title}</h2>
-        <p>Genre: ${film.Genre}</p>
-        <p class="showtime">Showtime: ${new Date(film.FeatureStartTime).toLocaleString()}</p>
-        <p>Format: ${film.FilmFormat}</p>
-      </div>
-    `;
-
-    filmList.appendChild(filmItem);
-  });
-}
-
-// Initialize
-fetchNowShowing();
+init();
