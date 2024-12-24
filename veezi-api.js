@@ -78,6 +78,7 @@ function displayShowtimes(showtimes, filmsMap) {
 
     showtimes.forEach((session) => {
         const showtimeItem = document.createElement("li");
+        showtimeItem.classList.add("showtime-item"); // Add CSS class for styling
 
         // Get film details
         const film = filmsMap[session.FilmId];
@@ -85,11 +86,14 @@ function displayShowtimes(showtimes, filmsMap) {
         const filmTitle = `<strong>${session.Title}</strong>`;
         const startTime = formatTimeAndDate(session.PreShowStartTime); // Use formatted time and date
 
-        // Format showtime details with poster
+        // Format showtime details with poster and text side by side
         const formattedShowtime = `
-            <div>
-                <img src="${posterUrl}" alt="${session.Title} poster" style="width:100px;height:auto;">
-                <p>${filmTitle} - ${startTime}</p>
+            <div class="showtime-container">
+                <img class="poster" src="${posterUrl}" alt="${session.Title} poster">
+                <div class="showtime-text">
+                    <p>${filmTitle}</p>
+                    <p>${startTime}</p>
+                </div>
             </div>
         `;
 

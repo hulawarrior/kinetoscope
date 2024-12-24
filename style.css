@@ -28,4 +28,24 @@ li {
     margin: 10px 0;
     padding: 15px;
     background-color: #111;
+    display: flex;
+    align-items: center; /* Align poster and text vertically */
+}
+
+img.poster {
+    width: 100px;
+    height: auto;
+    border-radius: 4px; /* Optional for rounded corners */
+    margin-right: 15px; /* Add spacing between poster and text */
+}
+
+.showtime-text {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.showtime-text p {
+    margin: 5px 0;
+    line-height: 1.5; /* Improves readability */
 }
