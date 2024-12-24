@@ -1,4 +1,4 @@
-veezi-api.js: const apiKey = "n06hg935gmg68bdv2526wkyjg4"; // Replace with your actual API key
+const apiKey = "n06hg935gmg68bdv2526wkyjg4"; // Replace with your actual API key
 const apiUrl = "https://api.uswest.veezi.com/v1/session"; // Showtimes endpoint
 
 async function fetchShowtimes() {
