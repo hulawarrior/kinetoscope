@@ -58,13 +58,18 @@ async function fetchShowtimes() {
     }
 }
 
-function formatTime(dateString) {
+function formatTimeAndDate(dateString) {
+    const date = new Date(dateString);
     const options = { 
-        hour: '2-digit', 
-        minute: '2-digit', 
-        hour12: true // Use 12-hour format (change to false for 24-hour format)
-    };
-    return new Intl.DateTimeFormat('en-US', options).format(new Date(dateString));
+        weekday: 'short', 
+        month: 'short', 
+        day: 'numeric' 
+    }; // Format for "Mon Dec. 12"
+    const datePart = new Intl.DateTimeFormat('en-US', options).format(date);
+    const hour = date.getHours() % 12 || 12; // Convert to 12-hour format without leading zero
+    const minute = date.getMinutes().toString().padStart(2, '0'); // Always show two digits for minutes
+    const ampm = date.getHours() < 12 ? 'AM' : 'PM';
+    return `${datePart} ${hour}:${minute} ${ampm}`;
 }
 
 function displayShowtimes(showtimes, filmsMap) {
@@ -78,7 +83,7 @@ function displayShowtimes(showtimes, filmsMap) {
         const film = filmsMap[session.FilmId];
         const posterUrl = film?.FilmPosterThumbnailUrl || "https://via.placeholder.com/100x150?text=Poster";
         const filmTitle = `<strong>${session.Title}</strong>`;
-        const startTime = formatTime(session.PreShowStartTime); // Use PreShowStartTime and formatted time
+        const startTime = formatTimeAndDate(session.PreShowStartTime); // Use formatted time and date
 
         // Format showtime details with poster
         const formattedShowtime = `
