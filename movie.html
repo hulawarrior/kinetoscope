@@ -10,7 +10,6 @@
     <div id="movie-content" class="container">
         <img id="movie-backdrop" src="" alt="Movie Backdrop">
         <div class="header-with-back">
-            <!-- <a href="index.html" class="back-link">←</a> -->
             <h1 id="movie-title">Loading...</h1>
         </div>
         <div id="movie-showtimes">
@@ -25,15 +24,30 @@
         const filmApiUrl = "https://api.uswest.veezi.com/v4/film";
         const sessionApiUrl = "https://api.uswest.veezi.com/v1/session";
 
+        // Utility function to format a date string into "Thu Dec. 26" format
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            const weekday = date.toLocaleDateString(undefined, { weekday: "short" });
+            const month = date.toLocaleDateString(undefined, { month: "short" });
+            const day = date.toLocaleDateString(undefined, { day: "2-digit" });
+            return `${weekday} ${month}. ${day}`;
+        }
+
+        // Utility function to format a time string into a 12-hour clock with lowercase am/pm
+        function formatTime(dateString) {
+            const date = new Date(dateString);
+            return date
+                .toLocaleTimeString([], { hour: "numeric", minute: "2-digit", hour12: true })
+                .toLowerCase(); // Convert AM/PM to am/pm
+        }
+
         // Fetch movie details
         async function fetchMovieDetails(filmId) {
             try {
                 if (!filmId) throw new Error("No filmId provided in URL");
 
                 const response = await fetch(`${filmApiUrl}/${filmId}`, {
-                    headers: {
-                        "VeeziAccessToken": apiKey,
-                    },
+                    headers: { "VeeziAccessToken": apiKey },
                 });
 
                 if (!response.ok) {
@@ -52,7 +66,7 @@
                     <p><strong>Duration:</strong> ${film.Duration || "Unknown"} minutes</p>
                     <p><strong>Rating:</strong> ${film.Rating || "Not Rated"}</p>
                     <p><strong>Opening Date:</strong> ${
-                        film.OpeningDate ? new Date(film.OpeningDate).toLocaleDateString() : "Unknown"
+                        film.OpeningDate ? formatDate(film.OpeningDate) : "Unknown"
                     }</p>
                 `;
             } catch (error) {
@@ -65,9 +79,7 @@
         async function fetchMovieShowtimes(filmId) {
             try {
                 const response = await fetch(sessionApiUrl, {
-                    headers: {
-                        "VeeziAccessToken": apiKey,
-                    },
+                    headers: { "VeeziAccessToken": apiKey },
                 });
 
                 if (!response.ok) {
@@ -89,10 +101,12 @@
 
                 // Populate showtimes
                 filteredShowtimes.forEach(showtime => {
-                    const startTime = new Date(showtime.PreShowStartTime).toLocaleString();
+                    const startTime = formatTime(showtime.PreShowStartTime);
+                    const date = formatDate(showtime.PreShowStartTime);
                     const listItem = document.createElement("li");
                     listItem.innerHTML = `
-                        <strong>${startTime}</strong> - <a href="purchase.html?sessionId=${showtime.Id}">Buy Tickets</a>
+                        <strong>${date}</strong> 
+                        <a href="purchase.html?sessionId=${showtime.Id}" class="time-link">${startTime}</a>
                     `;
                     showtimesList.appendChild(listItem);
                 });
@@ -105,7 +119,6 @@
         // Initialize the page
         document.addEventListener("DOMContentLoaded", () => {
             const filmId = new URLSearchParams(window.location.search).get("filmId");
-            console.log("Film ID from URL:", filmId); // Debug log
             if (filmId) {
                 fetchMovieDetails(filmId);
                 fetchMovieShowtimes(filmId);
