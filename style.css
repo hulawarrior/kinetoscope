@@ -92,15 +92,15 @@ img.poster {
 }
 
 .time-link {
-    font-size: var(--button-font-size); /* Use fixed button font size */
-    font-weight: var(--body-text-weight); /* Use global body text weight */
-    color: var(--primary-color); /* Button text color */
-    background-color: var(--secondary-color); /* Button background color */
-    padding: var(--button-padding); /* Button padding for size */
-    border-radius: var(--corner-radius); /* Rounded corners for buttons */
-    text-decoration: none; /* Remove underline from links */
-    display: inline-block; /* Ensure button-like appearance */
-    text-align: center; /* Center-align text */
+    font-size: var(--button-font-size);
+    font-weight: var(--body-text-weight);
+    color: var(--primary-color);
+    background-color: var(--secondary-color);
+    padding: var(--button-padding);
+    border-radius: var(--corner-radius);
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
 }
 
 .showtime-item a {
@@ -167,10 +167,9 @@ a:hover, a:focus, a:visited, a:active {
 /* Horizontal scrolling for showtimes */
 .showtimes-horizontal {
     display: flex;
-    gap: 10px; /* Space between time links */
-    overflow-x: auto; /* Enable horizontal scrolling */
-    scroll-snap-type: x mandatory; /* Snap to items for better user experience */
-    padding: 5px 0; /* Padding for aesthetics */
+    gap: 10px;
+    flex-wrap: wrap;
+    padding: 5px 0;
 }
 
 .showtimes-horizontal a {

@@ -38,7 +38,7 @@
             const date = new Date(dateString);
             return date
                 .toLocaleTimeString([], { hour: "numeric", minute: "2-digit", hour12: true })
-                .toLowerCase(); // Convert AM/PM to am/pm
+                .toLowerCase();
         }
 
         // Fetch movie details
@@ -99,16 +99,41 @@
                     return;
                 }
 
-                // Populate showtimes
+                // Group showtimes by date
+                const groupedByDate = {};
                 filteredShowtimes.forEach(showtime => {
-                    const startTime = formatTime(showtime.PreShowStartTime);
                     const date = formatDate(showtime.PreShowStartTime);
-                    const listItem = document.createElement("li");
-                    listItem.innerHTML = `
-                        <strong>${date}</strong> 
-                        <a href="purchase.html?sessionId=${showtime.Id}" class="time-link">${startTime}</a>
-                    `;
-                    showtimesList.appendChild(listItem);
+                    if (!groupedByDate[date]) {
+                        groupedByDate[date] = [];
+                    }
+                    groupedByDate[date].push(showtime);
+                });
+
+                // Sort dates chronologically
+                const sortedDates = Object.keys(groupedByDate).sort(
+                    (a, b) => new Date(a) - new Date(b)
+                );
+
+                // Render showtimes grouped by date
+                sortedDates.forEach(date => {
+                    const dateItem = document.createElement("li");
+                    dateItem.innerHTML = `<strong>${date}</strong>`;
+                    showtimesList.appendChild(dateItem);
+
+                    const timesContainer = document.createElement("div");
+                    timesContainer.className = "showtimes-horizontal";
+
+                    groupedByDate[date].forEach(showtime => {
+                        const startTime = formatTime(showtime.PreShowStartTime);
+                        const timeLink = document.createElement("a");
+                        timeLink.href = `purchase.html?sessionId=${showtime.Id}`;
+                        timeLink.className = "time-link";
+                        timeLink.textContent = startTime;
+
+                        timesContainer.appendChild(timeLink);
+                    });
+
+                    showtimesList.appendChild(timesContainer);
                 });
             } catch (error) {
                 console.error("Error loading showtimes:", error);
