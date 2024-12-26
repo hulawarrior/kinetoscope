@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Movie Details</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="movie-content" class="container">
+        <h1 id="movie-title">Loading...</h1>
+        <img id="movie-backdrop" src="" alt="Movie Backdrop">
+        <p id="movie-synopsis">Loading synopsis...</p>
+        <div id="movie-details"></div>
+        <div id="movie-showtimes">
+            <h2>Showtimes</h2>
+            <ul id="showtimes-list">Loading showtimes...</ul>
+        </div>
+    </div>
+
+    <script>
+        const apiKey = "n06hg935gmg68bdv2526wkyjg4"; // Your API Key
+        const filmApiUrl = "https://api.uswest.veezi.com/v4/film";
+        const sessionApiUrl = "https://api.uswest.veezi.com/v1/session";
+
+        // Fetch movie details
+        async function fetchMovieDetails(filmId) {
+            try {
+                if (!filmId) throw new Error("No filmId provided in URL");
+
+                const response = await fetch(`${filmApiUrl}/${filmId}`, {
+                    headers: {
+                        "VeeziAccessToken": apiKey,
+                    },
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch movie details: ${response.status} ${response.statusText}`);
+                }
+
+                const film = await response.json();
+
+                // Update movie details
+                document.getElementById("movie-title").textContent = film.Title || "Unknown Title";
+                document.getElementById("movie-backdrop").src =
+                    film.BackdropImageUrl || "https://via.placeholder.com/800x400?text=Backdrop+Not+Available";
+                document.getElementById("movie-synopsis").textContent = film.Synopsis || "No synopsis available.";
+                document.getElementById("movie-details").innerHTML = `
+                    <p><strong>Genre:</strong> ${film.Genre || "Unknown"}</p>
+                    <p><strong>Duration:</strong> ${film.Duration || "Unknown"} minutes</p>
+                    <p><strong>Rating:</strong> ${film.Rating || "Not Rated"}</p>
+                    <p><strong>Opening Date:</strong> ${
+                        film.OpeningDate ? new Date(film.OpeningDate).toLocaleDateString() : "Unknown"
+                    }</p>
+                `;
+            } catch (error) {
+                console.error("Error loading movie details:", error);
+                document.getElementById("movie-content").innerHTML = `<p>Error loading movie details.</p>`;
+            }
+        }
+
+        // Fetch showtimes for the movie
+        async function fetchMovieShowtimes(filmId) {
+            try {
+                const response = await fetch(sessionApiUrl, {
+                    headers: {
+                        "VeeziAccessToken": apiKey,
+                    },
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch showtimes: ${response.status} ${response.statusText}`);
+                }
+
+                const sessions = await response.json();
+
+                // Filter showtimes for the specific filmId
+                const filteredShowtimes = sessions.filter(session => session.FilmId === filmId);
+
+                const showtimesList = document.getElementById("showtimes-list");
+                showtimesList.innerHTML = ""; // Clear the placeholder text
+
+                if (filteredShowtimes.length === 0) {
+                    showtimesList.innerHTML = "<li>No showtimes available for this movie.</li>";
+                    return;
+                }
+
+                // Populate showtimes
+                filteredShowtimes.forEach(showtime => {
+                    const startTime = new Date(showtime.PreShowStartTime).toLocaleString();
+                    const listItem = document.createElement("li");
+                    listItem.innerHTML = `
+                        <strong>${startTime}</strong> - <a href="purchase.html?sessionId=${showtime.Id}">Buy Tickets</a>
+                    `;
+                    showtimesList.appendChild(listItem);
+                });
+            } catch (error) {
+                console.error("Error loading showtimes:", error);
+                document.getElementById("showtimes-list").innerHTML = "<li>Error loading showtimes.</li>";
+            }
+        }
+
+        // Initialize the page
+        document.addEventListener("DOMContentLoaded", () => {
+            const filmId = new URLSearchParams(window.location.search).get("filmId");
+            console.log("Film ID from URL:", filmId); // Debug log
+            if (filmId) {
+                fetchMovieDetails(filmId);
+                fetchMovieShowtimes(filmId);
+            } else {
+                document.getElementById("movie-content").innerHTML = `<p>No movie selected.</p>`;
+            }
+        });
+    </script>
+</body>
+</html>

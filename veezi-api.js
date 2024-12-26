@@ -1,102 +1,122 @@
 const apiKey = "n06hg935gmg68bdv2526wkyjg4"; // Replace with your actual API key
-const sessionApiUrl = "https://api.uswest.veezi.com/v1/session"; // Showtimes endpoint
-const filmApiUrl = "https://api.uswest.veezi.com/v4/film"; // Films endpoint
+const sessionApiUrl = "https://api.uswest.veezi.com/v1/session";
+const filmApiUrl = "https://api.uswest.veezi.com/v4/film";
 
-async function fetchFilms() {
-    try {
-        const response = await fetch(filmApiUrl, {
-            method: "GET",
-            headers: {
-                "VeeziAccessToken": apiKey,
-                "Content-Type": "application/json",
-            },
-        });
-
-        if (!response.ok) {
-            throw new Error(`Error: ${response.status} - ${response.statusText}`);
-        }
-
-        const films = await response.json();
-        return films.reduce((map, film) => {
-            map[film.Id] = film; // Create a mapping of FilmId to film data
-            return map;
-        }, {});
-    } catch (error) {
-        console.error("Failed to fetch films:", error);
-        return {};
-    }
-}
-
-async function fetchShowtimes() {
-    try {
-        const filmsMap = await fetchFilms();
-
-        const response = await fetch(sessionApiUrl, {
-            method: "GET",
-            headers: {
-                "VeeziAccessToken": apiKey,
-                "Content-Type": "application/json",
-            },
-        });
-
-        if (!response.ok) {
-            throw new Error(`Error: ${response.status} - ${response.statusText}`);
-        }
-
-        const showtimes = await response.json();
-
-        // Sort the showtimes by PreShowStartTime
-        const sortedShowtimes = showtimes.sort(
-            (a, b) => new Date(a.PreShowStartTime) - new Date(b.PreShowStartTime)
-        );
-
-        displayShowtimes(sortedShowtimes, filmsMap);
-    } catch (error) {
-        console.error("Failed to fetch showtimes:", error);
-        document.getElementById("showtimes-list").innerHTML =
-            "<li>Error loading showtimes. Please try again later.</li>";
-    }
-}
-
-function formatTimeAndDate(dateString) {
+// Utility function to format a date string into "Thu Dec. 26" format
+function formatDate(dateString) {
     const date = new Date(dateString);
-    const options = { 
-        weekday: 'short', 
-        month: 'short', 
-        day: 'numeric' 
-    }; // Format for "Mon Dec. 12"
-    const datePart = new Intl.DateTimeFormat('en-US', options).format(date);
-    const hour = date.getHours() % 12 || 12; // Convert to 12-hour format without leading zero
-    const minute = date.getMinutes().toString().padStart(2, '0'); // Always show two digits for minutes
-    const ampm = date.getHours() < 12 ? 'AM' : 'PM';
-    return `${datePart} ${hour}:${minute} ${ampm}`;
+
+    // Extract parts of the date
+    const weekday = date.toLocaleDateString(undefined, { weekday: "short" });
+    const month = date.toLocaleDateString(undefined, { month: "short" });
+    const day = date.toLocaleDateString(undefined, { day: "2-digit" });
+
+    // Add a period only after the month
+    return `${weekday} ${month}. ${day}`;
 }
 
-function displayShowtimes(showtimes, filmsMap) {
+// Utility function to format a time string into a 12-hour clock with lowercase am/pm
+function formatTime(dateString) {
+    const date = new Date(dateString);
+    return date
+        .toLocaleTimeString([], {
+            hour: "numeric",
+            minute: "2-digit",
+            hour12: true,
+        })
+        .toLowerCase(); // Convert AM/PM to am/pm
+}
+
+async function fetchData(url, headers) {
+    try {
+        const response = await fetch(url, { method: "GET", headers });
+        if (!response.ok) {
+            console.error(`Error: ${response.status} - ${response.statusText}`);
+            throw new Error(`API request failed with status ${response.status}`);
+        }
+        const data = await response.json();
+        console.log(`Data from ${url}:`, data); // Log the data
+        return data;
+    } catch (error) {
+        console.error("Fetch data error:", error.message);
+        throw error;
+    }
+}
+
+function renderShowtimes(showtimes, films) {
     const list = document.getElementById("showtimes-list");
-    list.innerHTML = ""; // Clear existing items
+    list.innerHTML = ""; // Clear old items
 
-    showtimes.forEach((session) => {
-        const showtimeItem = document.createElement("li");
+    if (!showtimes.length) {
+        list.innerHTML = "<li>No showtimes available.</li>";
+        return;
+    }
 
-        // Get film details
-        const film = filmsMap[session.FilmId];
-        const posterUrl = film?.FilmPosterThumbnailUrl || "https://via.placeholder.com/100x150?text=Poster";
-        const filmTitle = `<strong>${session.Title}</strong>`;
-        const startTime = formatTimeAndDate(session.PreShowStartTime); // Use formatted time and date
+    // Get the current time
+    const now = new Date();
 
-        // Format showtime details with poster
-        const formattedShowtime = `
-            <div>
-                <img src="${posterUrl}" alt="${session.Title} poster" style="width:100px;height:auto;">
-                <p>${filmTitle} - ${startTime}</p>
-            </div>
+    // Filter out showtimes that have already passed
+    const upcomingShowtimes = showtimes.filter(showtime => {
+        const showtimeDate = new Date(showtime.PreShowStartTime);
+        return showtimeDate >= now; // Keep only upcoming showtimes
+    });
+
+    if (!upcomingShowtimes.length) {
+        list.innerHTML = "<li>No upcoming showtimes available.</li>";
+        return;
+    }
+
+    // Sort the remaining showtimes by PreShowStartTime
+    const sortedShowtimes = upcomingShowtimes.sort((a, b) => {
+        const dateA = new Date(a.PreShowStartTime);
+        const dateB = new Date(b.PreShowStartTime);
+        return dateA - dateB; // Ascending order
+    });
+
+    sortedShowtimes.forEach(showtime => {
+        const film = films[showtime.FilmId];
+        // Use FilmPosterUrl for high resolution; fallback to FilmPosterThumbnailUrl
+        const posterUrl = film?.FilmPosterUrl || film?.FilmPosterThumbnailUrl || "https://via.placeholder.com/300x400?text=Poster+Not+Available";
+
+        const itemHtml = `
+            <li class="showtime-item">
+                <!-- Poster with link to movie details -->
+                <a href="movie.html?filmId=${showtime.FilmId}">
+                    <img class="poster" src="${posterUrl}" alt="${film?.Title || 'Poster Not Available'}">
+                </a>
+                <div class="showtime-text">
+                    <!-- Title with link to movie details -->
+                    <p>
+                        <a href="movie.html?filmId=${showtime.FilmId}" class="movie-title-link">
+                            ${film?.Title || "Unknown Title"}
+                        </a>
+                    </p>
+                    <p>${formatDate(showtime.PreShowStartTime)}</p> <!-- Date -->
+                    <p>
+                        <a href="purchase.html?sessionId=${showtime.Id}" class="time-link">${formatTime(showtime.PreShowStartTime)}</a>
+                    </p>
+                </div>
+            </li>
         `;
-
-        showtimeItem.innerHTML = formattedShowtime;
-        list.appendChild(showtimeItem);
+        list.insertAdjacentHTML('beforeend', itemHtml);
     });
 }
 
-// Fetch showtimes on page load
-fetchShowtimes();
+async function init() {
+    try {
+        const films = await fetchData(filmApiUrl, { "VeeziAccessToken": apiKey });
+        const filmsMap = films.reduce((map, film) => {
+            map[film.Id] = film;
+            return map;
+        }, {});
+
+        const showtimes = await fetchData(sessionApiUrl, { "VeeziAccessToken": apiKey });
+        renderShowtimes(showtimes, filmsMap);
+    } catch (error) {
+        console.error("Failed to fetch data:", error.message);
+        document.getElementById("showtimes-list").innerHTML =
+            "<li style='color: red;'>Error loading showtimes. Please try again later.</li>";
+    }
+}
+
+document.addEventListener("DOMContentLoaded", init);
