@@ -1,132 +1,141 @@
 :root {
     /* === Global Variables === */
-    --corner-radius: 10px;
-    --poster-gap: 20px;
-    --text-spacing: 12px;
-    --primary-color: #fff;
-    --secondary-color: #333;
-    --body-text-weight: 400;
-    --header-text-weight: 400;
-    --header-text-size: 1.9rem;
-    --body-text-size: 1rem;
-    --poster-width: 120px;
-    --button-padding: 10px 10px;
-    --button-font-size: 1rem;
+    /* These variables define reusable design values for consistency */
+    
+    /* === Global Corner and Spacing === */
+    --corner-radius: 10px; /* Rounded corners for posters, buttons, etc. */
+    --poster-gap: 20px; /* Space between the poster image and its associated text */
+    --text-spacing: 12px; /* Space between elements within text blocks */
+
+    /* === Global Colors === */
+    --primary-color: #fff; /* Main text color, typically used for titles and body text */
+    --secondary-color: #333; /* Secondary color for elements like dates or buttons */
+
+    /* === Global Font Weights === */
+    --body-text-weight: 400; /* Font weight for general body text (normal weight) */
+    --header-text-weight: 400; /* Font weight for headers */
+
+    /* === Global Font Sizes === */
+    --header-text-size: 1.9rem; /* Font size for main headings */
+    --body-text-size: 1rem; /* Font size for general body text */
+
+    /* === Global Poster Dimensions === */
+    --poster-width: 120px; /* Fixed width for movie posters */
+
+    /* === Global Button Sizes === */
+    --button-padding: 10px 10px; /* Padding inside buttons for spacing */
+    --button-font-size: 1rem; /* Font size for button text */
 }
 
 body {
-    font-family: Inter, Arial, sans-serif;
-    background-color: #000000;
-    color: var(--primary-color);
-    font-weight: var(--body-text-weight);
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: flex-start;
-    min-height: 100vh;
-    overflow-y: auto;
-    overflow-x: hidden; /* Prevent horizontal scrolling */
+    /* Global styles applied to the body of the page */
+    font-family: Inter, Arial, sans-serif; /* Font stack for readability */
+    background-color: #000000; /* Green background for the page */
+    color: var(--primary-color); /* Text color applied to body */
+    font-weight: var(--body-text-weight); /* Normal font weight for text */
+    margin: 0; /* Remove default browser margin */
+    padding: 0; /* Remove default browser padding */
+    display: flex; /* Flexbox layout for centering content */
+    justify-content: center; /* Center content horizontally */
+    align-items: flex-start; /* Align content at the top */
+    min-height: 100vh; /* Ensure the page takes up full viewport height */
+    overflow-y: auto; /* Allow vertical scrolling */
 }
 
+/* ========== Layout ========== */
 .container {
-    max-width: 90%; /* Dynamic width for responsiveness */
-    padding: 20px;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-    background-color: transparent;
+    /* A container to hold content elements */
+    max-width: 330px; /* Limit the width to 600px for better readability */
+    padding: 20px; /* Space inside the container */
+    display: flex; /* Flexbox layout */
+    flex-direction: column; /* Stack child elements vertically */
+    gap: 20px; /* Space between child elements */
+    background-color: transparent; /* No background color */
 }
 
 h1 {
-    font-size: var(--header-text-size);
-    color: var(--primary-color);
-    font-weight: var(--header-text-weight);
-    margin-bottom: 20px;
-    text-align: left;
+    /* Styling for header elements */
+    font-size: var(--header-text-size); /* Use global header font size */
+    color: var(--primary-color); /* Use primary color for text */
+    font-weight: var(--header-text-weight); /* Use header font weight */
+    margin-bottom: 20px; /* Add space below the header */
+    text-align: left; /* Align text to the left */
 }
 
+/* ========== Lists ========== */
 ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
-    width: 100%;
+    /* Styling for unordered lists */
+    list-style: none; /* Remove default bullet points */
+    padding: 0; /* Remove default padding */
+    margin: 0; /* Remove default margin */
+    width: 100%; /* Ensure full width of the container */
 }
 
 li {
-    display: flex;
-    align-items: flex-start;
-    gap: var(--poster-gap);
-    margin-bottom: 20px;
+    /* Styling for list items */
+    display: flex; /* Flexbox for horizontal alignment */
+    align-items: flex-start; /* Align items at the top */
+    gap: var(--poster-gap); /* Space between poster and text */
+    margin-bottom: 20px; /* Space below each list item */
 }
 
 img.poster {
-    width: var(--poster-width);
-    height: auto;
-    object-fit: cover;
-    margin: 0;
-    border-radius: var(--corner-radius);
-    max-width: 100%; /* Responsive adjustment */
+    /* Styling for movie poster images */
+    width: var(--poster-width); /* Fixed width from global variable */
+    height: auto; /* Maintain the image's aspect ratio */
+    object-fit: cover; /* Ensure the image fills the dimensions */
+    margin: 0; /* Remove default margin */
+    border-radius: var(--corner-radius); /* Rounded corners for visual consistency */
 }
 
 .showtime-text {
-    display: flex;
-    flex-direction: column;
-    margin: 0;
+    /* Container for text elements related to showtime */
+    display: flex; /* Flexbox layout */
+    flex-direction: column; /* Stack text elements vertically */
+    margin: 0; /* Remove default margin */
 }
 
 .showtime-text p {
-    font-size: var(--body-text-size);
-    font-weight: var(--body-text-weight);
-    margin: 0;
-    margin-bottom: var(--text-spacing);
+    /* Styling for paragraphs within showtime text */
+    font-size: var(--body-text-size); /* Use global body text size */
+    font-weight: var(--body-text-weight); /* Use global body text weight */
+    margin: 0; /* Remove default margin */
+    margin-bottom: var(--text-spacing); /* Space between paragraphs */
 }
 
 .showtime-text p:last-child {
+    /* Remove spacing below the last paragraph */
     margin-bottom: 0;
 }
 
 .time-link {
-    font-size: var(--button-font-size);
-    font-weight: var(--body-text-weight);
-    color: var(--primary-color);
-    background-color: var(--secondary-color);
-    padding: var(--button-padding);
-    border-radius: var(--corner-radius);
-    text-decoration: none;
-    display: inline-block;
-    text-align: center;
+    /* Styling for showtime links (like buttons) */
+    font-size: var(--button-font-size); /* Use global button font size */
+    font-weight: var(--body-text-weight); /* Use global body text weight */
+    color: var(--primary-color); /* Button text color */
+    background-color: var(--secondary-color); /* Button background color */
+    padding: var(--button-padding); /* Button padding for size */
+    border-radius: var(--corner-radius); /* Rounded corners for buttons */
+    text-decoration: none; /* Remove underline from links */
+    display: inline-block; /* Ensure button-like appearance */
+    text-align: center; /* Center-align text */
 }
 
 .showtime-item a {
-    text-decoration: none;
-    color: inherit;
+    /* General styling for links within showtime items */
+    text-decoration: none; /* Remove default underline */
+    color: inherit; /* Inherit text color from parent */
+}
+
+.showtime-item a img.poster {
+    /* Ensure proper behavior of linked poster images */
+    display: block; /* Ensure the image fills its container */
+    border: none; /* Remove any default borders */
 }
 
 .movie-title-link {
-    text-decoration: none;
-    color: var(--primary-color);
-    font-weight: var(--body-text-weight);
-}
-
-/* === Responsive Design === */
-@media (max-width: 600px) {
-    :root {
-        --header-text-size: 1.5rem;
-        --body-text-size: 0.9rem;
-        --poster-width: 100px;
-    }
-    .container {
-        padding: 10px;
-    }
-    .showtime-item {
-        flex-direction: column; /* Stack elements vertically */
-        align-items: center;
-    }
-    .showtime-text {
-        text-align: center; /* Center text for better aesthetics */
-    }
-    .time-link {
-        padding: 15px 20px; /* Larger touch targets */
-    }
+    /* Styling for links on movie titles */
+    text-decoration: none; /* Remove underline */
+    color: var(--primary-color); /* Use primary color */
+    font-weight: var(--body-text-weight); /* Use normal text weight */
 }
