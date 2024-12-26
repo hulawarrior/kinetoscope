@@ -40,7 +40,7 @@ body {
     display: flex; /* Flexbox layout */
     flex-direction: column; /* Stack child elements vertically */
     gap: 20px; /* Fixed space between child elements */
-    background-color: purple; /* No background color */
+    background-color: rgb(0, 0, 0); /* No background color */
 }
 
 h1 {
@@ -127,4 +127,11 @@ a:hover, a:focus, a:visited, a:active {
     outline: none; /* Remove focus outlines */
     border: none; /* Remove borders on interaction */
     background: none; /* Remove background on interaction */
+}
+
+.time-link:hover {
+    color: var(--primary-color); /* Keep text color consistent */
+    background-color: var(--secondary-color); /* Ensure the background doesn't change */
+    transform: none; /* Disable any potential transformations */
+    filter: none; /* Disable any potential hover effects like brightness or shadows */
 }
