@@ -164,38 +164,16 @@ a:hover, a:focus, a:visited, a:active {
     padding: 0;
 }
 
-/* Horizontally scrollable container for multiple showtimes */
+/* Horizontal scrolling for showtimes */
 .showtimes-horizontal {
-    display: flex; /* Arrange time links in a row */
+    display: flex;
     gap: 10px; /* Space between time links */
     overflow-x: auto; /* Enable horizontal scrolling */
-    scroll-snap-type: x mandatory; /* Snap to each showtime link */
-    padding: 5px 0; /* Padding for spacing */
-    max-width: 100%; /* Ensure it fits within the parent container */
-    white-space: nowrap; /* Prevent wrapping of time links */
-    scrollbar-width: thin; /* Thin scrollbar for browsers that support it */
-    -webkit-overflow-scrolling: touch; /* Smooth scrolling for iOS */
+    scroll-snap-type: x mandatory; /* Snap to items for better user experience */
+    padding: 5px 0; /* Padding for aesthetics */
 }
 
-/* Styling for each time link */
 .showtimes-horizontal a {
-    scroll-snap-align: start; /* Snap each link to the start of the container */
-    text-decoration: none; /* Remove underline */
-    color: var(--primary-color); /* Primary text color */
-    padding: 5px 10px; /* Add padding for better clickability */
-    border: 1px solid var(--secondary-color); /* Border for visibility */
-    border-radius: var(--corner-radius); /* Rounded corners */
-    background-color: var(--secondary-color); /* Subtle background color */
-    white-space: nowrap; /* Prevent links from breaking lines */
-}
-
-/* Add hover effect for better feedback */
-.showtimes-horizontal a:hover {
-    background-color: var(--primary-color); /* Invert background color */
-    color: var(--secondary-color); /* Invert text color */
-}
-
-/* Add smooth scrolling for better UX */
-.showtimes-horizontal {
-    scroll-behavior: smooth; /* Enable smooth scrolling */
+    scroll-snap-align: start; /* Ensure links snap neatly */
+    white-space: nowrap; /* Prevent text from breaking to the next line */
 }

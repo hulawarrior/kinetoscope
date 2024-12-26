@@ -52,25 +52,40 @@ function renderShowtimes(showtimes, films) {
         return;
     }
 
-    // Group and process showtimes by movie and date
+    // Get the current time
+    const now = new Date();
+
+    // Filter and sort showtimes
+    const upcomingShowtimes = showtimes
+        .filter(showtime => new Date(showtime.PreShowStartTime) >= now)
+        .sort((a, b) => new Date(a.PreShowStartTime) - new Date(b.PreShowStartTime));
+
+    // Group showtimes by movie and date
     const groupedShowtimes = {};
-    showtimes.forEach(showtime => {
+    upcomingShowtimes.forEach(showtime => {
         const film = films[showtime.FilmId];
+        if (!film) return;
+
         const date = formatDate(showtime.PreShowStartTime);
         const key = `${showtime.FilmId}-${date}`;
 
         if (!groupedShowtimes[key]) {
-            groupedShowtimes[key] = { film, date, times: [] };
+            groupedShowtimes[key] = {
+                film,
+                date,
+                times: [],
+            };
         }
+
         groupedShowtimes[key].times.push({
             time: formatTime(showtime.PreShowStartTime),
             sessionId: showtime.Id,
         });
     });
 
-    // Render grouped showtimes
+    // Render the grouped showtimes
     Object.values(groupedShowtimes).forEach(({ film, date, times }) => {
-        const posterUrl = film.FilmPosterUrl || "https://via.placeholder.com/300x400";
+        const posterUrl = film.FilmPosterUrl || film.FilmPosterThumbnailUrl || "https://via.placeholder.com/300x400?text=Poster+Not+Available";
 
         const timesHtml = times
             .map(
@@ -89,9 +104,7 @@ function renderShowtimes(showtimes, films) {
                         <a href="movie.html?filmId=${film.Id}" class="movie-title-link">${film.Title}</a>
                     </p>
                     <p>${date}</p>
-                    <div class="showtimes-horizontal">
-                        ${timesHtml}
-                    </div>
+                    <div class="showtimes-horizontal">${timesHtml}</div>
                 </div>
             </li>
         `;
