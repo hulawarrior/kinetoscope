@@ -10,12 +10,12 @@
     --body-text-weight: 400; /* Font weight for general body text (normal weight) */
     --header-text-weight: 400; /* Font weight for headers */
 
-    --header-text-size: 1.9rem; /* Font size for main headings */
-    --body-text-size: 1rem; /* Font size for general body text */
+    --header-text-size: 30px; /* Fixed font size for main headings */
+    --body-text-size: 16px; /* Fixed font size for general body text */
 
     --poster-width: 120px; /* Fixed width for movie posters */
     --button-padding: 10px 10px; /* Padding inside buttons for spacing */
-    --button-font-size: 1rem; /* Font size for button text */
+    --button-font-size: 16px; /* Fixed font size for button text */
 }
 
 body {
@@ -33,21 +33,21 @@ body {
 }
 
 .container {
-    max-width: 90%; /* Dynamic width that scales with screen size */
-    width: 100%;    /* Ensure it spans the full width on smaller screens */
+    max-width: 350px; /* Fixed maximum width for consistency */
+    width: 100%; /* Ensure it spans the full width on smaller screens */
     margin: 0 auto; /* Center the container */
-    padding: 20px;  /* Space inside the container */
+    padding: 20px; /* Space inside the container */
     display: flex; /* Flexbox layout */
     flex-direction: column; /* Stack child elements vertically */
-    gap: 20px; /* Space between child elements */
-    background-color: transparent; /* No background color */
+    gap: 20px; /* Fixed space between child elements */
+    background-color: purple; /* No background color */
 }
 
 h1 {
-    font-size: var(--header-text-size); /* Use global header font size */
+    font-size: var(--header-text-size); /* Use fixed header font size */
     color: var(--primary-color); /* Use primary color for text */
     font-weight: var(--header-text-weight); /* Use header font weight */
-    margin-bottom: 20px; /* Add space below the header */
+    margin-bottom: 20px; /* Fixed space below the header */
     text-align: left; /* Align text to the left */
 }
 
@@ -61,8 +61,8 @@ ul {
 li {
     display: flex; /* Flexbox for horizontal alignment */
     align-items: flex-start; /* Align items at the top */
-    gap: var(--poster-gap); /* Space between poster and text */
-    margin-bottom: 20px; /* Space below each list item */
+    gap: var(--poster-gap); /* Fixed space between poster and text */
+    margin-bottom: 20px; /* Fixed space below each list item */
 }
 
 img.poster {
@@ -80,10 +80,10 @@ img.poster {
 }
 
 .showtime-text p {
-    font-size: var(--body-text-size); /* Use global body text size */
+    font-size: var(--body-text-size); /* Use fixed body text size */
     font-weight: var(--body-text-weight); /* Use global body text weight */
     margin: 0; /* Remove default margin */
-    margin-bottom: var(--text-spacing); /* Space between paragraphs */
+    margin-bottom: var(--text-spacing); /* Fixed space between paragraphs */
 }
 
 .showtime-text p:last-child {
@@ -91,7 +91,7 @@ img.poster {
 }
 
 .time-link {
-    font-size: var(--button-font-size); /* Use global button font size */
+    font-size: var(--button-font-size); /* Use fixed button font size */
     font-weight: var(--body-text-weight); /* Use global body text weight */
     color: var(--primary-color); /* Button text color */
     background-color: var(--secondary-color); /* Button background color */
@@ -113,12 +113,18 @@ img.poster {
     font-weight: var(--body-text-weight); /* Use normal text weight */
 }
 
-/* === Responsive Design === */
-@media (max-width: 600px) {
-    .container {
-        gap: 15px; /* Reduce spacing between elements for smaller devices */
-    }
-    li {
-        margin-bottom: 15px; /* Adjust spacing */
-    }
+a {
+    text-decoration: none; /* Remove underline or other default text decoration */
+    color: inherit; /* Make the link color inherit from its parent */
+    outline: none; /* Remove focus outlines */
+    border: none; /* Remove any borders */
+    background: none; /* Remove any background */
+}
+
+a:hover, a:focus, a:visited, a:active {
+    text-decoration: none; /* Remove all default styles for different link states */
+    color: inherit; /* Ensure consistent color */
+    outline: none; /* Remove focus outlines */
+    border: none; /* Remove borders on interaction */
+    background: none; /* Remove background on interaction */
 }
