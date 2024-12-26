@@ -135,3 +135,30 @@ a:hover, a:focus, a:visited, a:active {
     transform: none; /* Disable any potential transformations */
     filter: none; /* Disable any potential hover effects like brightness or shadows */
 }
+
+#back-button {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    z-index: 100;
+}
+
+.back-link {
+    text-decoration: none;
+    color: var(--primary-color);
+    background-color: var(--secondary-color);
+    padding: var(--button-padding);
+    border-radius: var(--corner-radius);
+    font-size: var(--button-font-size);
+    font-weight: var(--body-text-weight);
+    display: inline-block;
+}
+
+#movie-backdrop {
+    width: 100%;
+    height: auto;
+    display: block;
+    object-fit: cover;
+    margin: 0;
+    padding: 0;
+}
