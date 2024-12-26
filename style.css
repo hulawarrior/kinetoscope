@@ -80,14 +80,15 @@ img.poster {
 }
 
 .showtime-text p {
-    font-size: var(--body-text-size); /* Use fixed body text size */
-    font-weight: var(--body-text-weight); /* Use global body text weight */
-    margin: 0; /* Remove default margin */
-    margin-bottom: var(--text-spacing); /* Fixed space between paragraphs */
+    margin: 0;
+    margin-bottom: var(--text-spacing); /* Keep spacing for other paragraphs */
 }
 
 .showtime-text p:last-child {
-    margin-bottom: 0; /* Remove spacing below the last paragraph */
+    display: flex;
+    gap: 10px; /* Add spacing between the time links */
+    flex-wrap: wrap; /* Allow wrapping if there are too many times */
+    margin-bottom: 0; /* Remove bottom margin */
 }
 
 .time-link {
@@ -161,4 +162,18 @@ a:hover, a:focus, a:visited, a:active {
     object-fit: cover;
     margin: 0;
     padding: 0;
+}
+
+/* Horizontal scrolling for showtimes */
+.showtimes-horizontal {
+    display: flex;
+    gap: 10px; /* Space between time links */
+    overflow-x: auto; /* Enable horizontal scrolling */
+    scroll-snap-type: x mandatory; /* Snap to items for better user experience */
+    padding: 5px 0; /* Padding for aesthetics */
+}
+
+.showtimes-horizontal a {
+    scroll-snap-align: start; /* Ensure links snap neatly */
+    white-space: nowrap; /* Prevent text from breaking to the next line */
 }

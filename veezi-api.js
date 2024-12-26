@@ -55,50 +55,60 @@ function renderShowtimes(showtimes, films) {
     // Get the current time
     const now = new Date();
 
-    // Filter out showtimes that have already passed
-    const upcomingShowtimes = showtimes.filter(showtime => {
-        const showtimeDate = new Date(showtime.PreShowStartTime);
-        return showtimeDate >= now; // Keep only upcoming showtimes
-    });
+    // Filter and sort showtimes
+    const upcomingShowtimes = showtimes
+        .filter(showtime => new Date(showtime.PreShowStartTime) >= now)
+        .sort((a, b) => new Date(a.PreShowStartTime) - new Date(b.PreShowStartTime));
 
-    if (!upcomingShowtimes.length) {
-        list.innerHTML = "<li>No upcoming showtimes available.</li>";
-        return;
-    }
-
-    // Sort the remaining showtimes by PreShowStartTime
-    const sortedShowtimes = upcomingShowtimes.sort((a, b) => {
-        const dateA = new Date(a.PreShowStartTime);
-        const dateB = new Date(b.PreShowStartTime);
-        return dateA - dateB; // Ascending order
-    });
-
-    sortedShowtimes.forEach(showtime => {
+    // Group showtimes by movie and date
+    const groupedShowtimes = {};
+    upcomingShowtimes.forEach(showtime => {
         const film = films[showtime.FilmId];
-        // Use FilmPosterUrl for high resolution; fallback to FilmPosterThumbnailUrl
-        const posterUrl = film?.FilmPosterUrl || film?.FilmPosterThumbnailUrl || "https://via.placeholder.com/300x400?text=Poster+Not+Available";
+        if (!film) return;
+
+        const date = formatDate(showtime.PreShowStartTime);
+        const key = `${showtime.FilmId}-${date}`;
+
+        if (!groupedShowtimes[key]) {
+            groupedShowtimes[key] = {
+                film,
+                date,
+                times: [],
+            };
+        }
+
+        groupedShowtimes[key].times.push({
+            time: formatTime(showtime.PreShowStartTime),
+            sessionId: showtime.Id,
+        });
+    });
+
+    // Render the grouped showtimes
+    Object.values(groupedShowtimes).forEach(({ film, date, times }) => {
+        const posterUrl = film.FilmPosterUrl || film.FilmPosterThumbnailUrl || "https://via.placeholder.com/300x400?text=Poster+Not+Available";
+
+        const timesHtml = times
+            .map(
+                time =>
+                    `<a href="purchase.html?sessionId=${time.sessionId}" class="time-link">${time.time}</a>`
+            )
+            .join("");
 
         const itemHtml = `
             <li class="showtime-item">
-                <!-- Poster with link to movie details -->
-                <a href="movie.html?filmId=${showtime.FilmId}">
-                    <img class="poster" src="${posterUrl}" alt="${film?.Title || 'Poster Not Available'}">
+                <a href="movie.html?filmId=${film.Id}">
+                    <img class="poster" src="${posterUrl}" alt="${film.Title}">
                 </a>
                 <div class="showtime-text">
-                    <!-- Title with link to movie details -->
                     <p>
-                        <a href="movie.html?filmId=${showtime.FilmId}" class="movie-title-link">
-                            ${film?.Title || "Unknown Title"}
-                        </a>
+                        <a href="movie.html?filmId=${film.Id}" class="movie-title-link">${film.Title}</a>
                     </p>
-                    <p>${formatDate(showtime.PreShowStartTime)}</p> <!-- Date -->
-                    <p>
-                        <a href="purchase.html?sessionId=${showtime.Id}" class="time-link">${formatTime(showtime.PreShowStartTime)}</a>
-                    </p>
+                    <p>${date}</p>
+                    <div class="showtimes-horizontal">${timesHtml}</div>
                 </div>
             </li>
         `;
-        list.insertAdjacentHTML('beforeend', itemHtml);
+        list.insertAdjacentHTML("beforeend", itemHtml);
     });
 }
 
