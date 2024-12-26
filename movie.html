@@ -12,14 +12,11 @@
         <div class="header-with-back">
             <h1 id="movie-title">Loading...</h1>
         </div>
-        <div id="movie-showtimes">
-            <ul id="showtimes-list">Loading showtimes...</ul>
-        </div>
         <p id="movie-synopsis">Loading synopsis...</p>
         <div id="movie-details"></div>
     </div>
     <div id="sticky-banner">
-        Test
+        <!-- Sticky banner content will be dynamically updated -->
     </div>
 
     <script>
@@ -42,6 +39,21 @@
             return date
                 .toLocaleTimeString([], { hour: "numeric", minute: "2-digit", hour12: true })
                 .toLowerCase();
+        }
+
+        // Function to update the sticky banner with the next showtime
+        function updateStickyBanner(dateString, sessionId) {
+            const formattedDate = formatDate(dateString);
+            const formattedTime = formatTime(dateString);
+            const banner = document.getElementById("sticky-banner");
+
+            // Create the sticky banner content
+            banner.innerHTML = `
+                <span>${formattedDate}</span>
+                <a href="purchase.html?sessionId=${sessionId}" class="time-link">
+                    ${formattedTime}
+                </a>
+            `;
         }
 
         // Fetch movie details
@@ -94,53 +106,22 @@
                 // Filter showtimes for the specific filmId
                 const filteredShowtimes = sessions.filter(session => session.FilmId === filmId);
 
-                const showtimesList = document.getElementById("showtimes-list");
-                showtimesList.innerHTML = ""; // Clear the placeholder text
-
                 if (filteredShowtimes.length === 0) {
-                    showtimesList.innerHTML = "<li>No showtimes available for this movie.</li>";
-                    return;
+                    return; // No showtimes available
                 }
 
-                // Group showtimes by date
-                const groupedByDate = {};
-                filteredShowtimes.forEach(showtime => {
-                    const date = formatDate(showtime.PreShowStartTime);
-                    if (!groupedByDate[date]) {
-                        groupedByDate[date] = [];
-                    }
-                    groupedByDate[date].push(showtime);
-                });
-
-                // Sort dates chronologically
-                const sortedDates = Object.keys(groupedByDate).sort(
-                    (a, b) => new Date(a) - new Date(b)
+                // Find the next showtime
+                const now = new Date();
+                const nextShowtime = filteredShowtimes.find(
+                    session => new Date(session.PreShowStartTime) >= now
                 );
 
-                // Render showtimes grouped by date
-                sortedDates.forEach(date => {
-                    const dateItem = document.createElement("li");
-                    dateItem.innerHTML = `<strong>${date}</strong>`;
-                    showtimesList.appendChild(dateItem);
-
-                    const timesContainer = document.createElement("div");
-                    timesContainer.className = "showtimes-horizontal";
-
-                    groupedByDate[date].forEach(showtime => {
-                        const startTime = formatTime(showtime.PreShowStartTime);
-                        const timeLink = document.createElement("a");
-                        timeLink.href = `purchase.html?sessionId=${showtime.Id}`;
-                        timeLink.className = "time-link";
-                        timeLink.textContent = startTime;
-
-                        timesContainer.appendChild(timeLink);
-                    });
-
-                    showtimesList.appendChild(timesContainer);
-                });
+                // Update the sticky banner with the next showtime
+                if (nextShowtime) {
+                    updateStickyBanner(nextShowtime.PreShowStartTime, nextShowtime.Id);
+                }
             } catch (error) {
                 console.error("Error loading showtimes:", error);
-                document.getElementById("showtimes-list").innerHTML = "<li>Error loading showtimes.</li>";
             }
         }
 

@@ -40,7 +40,7 @@ body {
     display: flex; /* Flexbox layout */
     flex-direction: column; /* Stack child elements vertically */
     gap: 20px; /* Fixed space between child elements */
-    background-color: rgb(26, 71, 119); /* No background color */
+    background-color: rgb(0, 0, 0); /* No background color */
 }
 
 h1 {
@@ -101,6 +101,7 @@ img.poster {
     text-decoration: none;
     display: inline-block;
     text-align: center;
+    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2); /* Optional shadow for depth */
 }
 
 .showtime-item a {
@@ -120,21 +121,6 @@ a {
     outline: none; /* Remove focus outlines */
     border: none; /* Remove any borders */
     background: none; /* Remove any background */
-}
-
-a:hover, a:focus, a:visited, a:active {
-    text-decoration: none; /* Remove all default styles for different link states */
-    color: inherit; /* Ensure consistent color */
-    outline: none; /* Remove focus outlines */
-    border: none; /* Remove borders on interaction */
-    background: none; /* Remove background on interaction */
-}
-
-.time-link:hover {
-    color: var(--primary-color); /* Keep text color consistent */
-    background-color: var(--secondary-color); /* Ensure the background doesn't change */
-    transform: none; /* Disable any potential transformations */
-    filter: none; /* Disable any potential hover effects like brightness or shadows */
 }
 
 #back-button {
@@ -182,15 +168,14 @@ a:hover, a:focus, a:visited, a:active {
 }
 
 #sticky-banner {
-    position: fixed; /* Makes the banner stick to the bottom */
-    bottom: 0; /* Aligns the banner to the bottom of the viewport */
-    left: 0; /* Stretches it to the left edge */
-    width: 100%; /* Makes it span the full width of the page */
-    background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent black background */
-    color: #fff; /* White text color */
-    text-align: center; /* Center the text inside the banner */
-    padding: 10px 0; /* Adds some padding for better appearance */
-    font-size: 16px; /* Adjusts text size */
-    z-index: 1000; /* Ensures it stays above other elements */
-    box-shadow: 0 -2px 5px rgba(0, 0, 0, 0.5); /* Adds a slight shadow for better visibility */
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: black; /* Solid black background */
+    color: white; /* White text color */
+    text-align: center;
+    padding: 10px 0; /* Consistent padding */
+    font-size: 16px;
+    z-index: 1000;
 }
