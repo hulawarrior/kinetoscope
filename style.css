@@ -1,28 +1,34 @@
 :root {
     /* === Global Variables === */
-    
+    /*COLOR*/
+    --primary-color: #fff; /* Main text color, typically used for titles and body text */
+    --secondary-color: #333; /* Secondary color for elements like dates or buttons */
+    --bg-color: #000000;
+
     /*ALIGNMENT/SIZING*/
+    --max-width: 350px;
+    --horizontal-spacing: 0px;
+
     --poster-gap-h: 0px; /* Space between the poster image and its associated text */
     --poster-gap-v: 0px;
+
+    --corner-radius: 0px; /* Rounded corners for posters, buttons, etc. */
+
     --text-spacing: 0px; /* Space between elements within text blocks */
     --back-arrow-width: 8px;
     --play-button-width: 50px;
     --poster-width: 120px; /* Fixed width for movie posters */
-    --corner-radius: 10px; /* Rounded corners for posters, buttons, etc. */
     --now-playing-top-margin: 0px; /* Adjust the value as needed */
     --button-padding: 10px 10px; /* Padding inside buttons for spacing */
+    --gap-1: 10px; /*gap between elements, notabally on the movie page*/
 
     /*TEXT*/
+    --font: Inter, Arial, sans-serif;
     --body-text-weight: 400; /* Font weight for general body text (normal weight) */
     --header-text-weight: 400; /* Font weight for headers */
     --header-text-size: 30px; /* Fixed font size for main headings */
     --body-text-size: 16px; /* Fixed font size for general body text */
     --button-font-size: 16px; /* Fixed font size for button text */
-
-    /*COLOR*/
-    --primary-color: #fff; /* Main text color, typically used for titles and body text */
-    --secondary-color: #333; /* Secondary color for elements like dates or buttons */
-    --bg-color: #00c3c6;
 
     
 }
@@ -34,7 +40,7 @@
 }
 
 body {
-    font-family: Inter, Arial, sans-serif; /* Font stack for readability */
+    font-family: var(--font); /* Font stack for readability */
     background-color: #000000; /* Dark background for the page */
     color: var(--primary-color); /* Text color applied to body */
     font-weight: var(--body-text-weight); /* Normal font weight for text */
@@ -48,13 +54,13 @@ body {
 }
 
 .container {
-    max-width: 350px; /* Fixed maximum width for consistency */
+    max-width: var(--max-width); /* Fixed maximum width for consistency */
     width: 100%; /* Ensure it spans the full width on smaller screens */
-    /* margin: 0 auto; Center the container */
-    /* padding: 0 px; Space inside the container */
+    padding-left: var(--horizontal-spacing);
+    padding-right: var(--horizontal-spacing);
     display: flex; /* Flexbox layout */
     flex-direction: column; /* Stack child elements vertically */
-    /* gap: 0px; Fixed space between child elements */
+    gap: var(--gap-1);
     background-color: var(--bg-color); /* No background color */
 }
 
