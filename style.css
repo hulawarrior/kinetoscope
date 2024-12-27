@@ -130,7 +130,7 @@ a {
     z-index: 100;
 }
 
-.back-link {
+.back-button {
     text-decoration: none;
     color: var(--primary-color);
     background-color: var(--secondary-color);
@@ -147,11 +147,11 @@ a {
 }
 
 #movie-backdrop {
-    width: calc(100% + 40px); /* Expand the image to cover the padding (20px on each side) */
-    height: auto; /* Maintain the aspect ratio */
-    margin: -20px 0 20px -20px; /* Pull the image outside the padding */
-    object-fit: cover; /* Ensure the image fills the space without distortion */
-    display: block; /* Removes extra spacing below the image */
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin: 20px auto; /* Centered with top and bottom margins */
+    border-radius: var(--corner-radius); /* Rounded corners for visual consistency */
 }
 
 /* Horizontal scrolling for showtimes */
@@ -178,4 +178,50 @@ a {
     padding: 10px 0; /* Consistent padding */
     font-size: 16px;
     z-index: 1000;
+}
+
+.back-arrow {
+    font-size: 24px; /* Adjust the size of the arrow */
+    margin-right: 10px; /* Add spacing between the arrow and text */
+    color: var(--primary-color); /* Match the arrow color to your theme */
+    display: inline-block; /* Align with the text */
+    vertical-align: middle; /* Center it vertically */
+}
+
+.now-playing-link {
+    text-decoration: none; /* Remove underline from the link */
+    color: var(--primary-color); /* Match the text color to your theme */
+    display: flex; /* Use flexbox to align the arrow and text */
+    align-items: center; /* Center the arrow and text vertically */
+}
+
+.back-arrow-img {
+    width: 8px; /* Adjust size */
+    height: auto; /* Maintain aspect ratio */
+    margin-right: 10px; /* Space between arrow and text */
+}
+
+.movie-poster-container {
+    position: relative; /* Relative positioning for the play button to overlay */
+    display: inline-block; /* Ensure the container adjusts to the size of the image */
+    width: 100%; /* Make it responsive */
+}
+
+#movie-backdrop {
+    display: block;
+    width: 100%; /* Ensure the image fits within the container */
+    border-radius: var(--corner-radius); /* Maintain rounded corners */
+}
+
+.play-button-link {
+    position: absolute; /* Position the play button over the image */
+    top: 50%; /* Center vertically */
+    left: 50%; /* Center horizontally */
+    transform: translate(-50%, -50%); /* Adjust for exact centering */
+    text-decoration: none; /* Remove underline from the link */
+}
+
+.play-button {
+    width: 50px; /* Adjust the size of the play button */
+    height: auto; /* Maintain aspect ratio */
 }

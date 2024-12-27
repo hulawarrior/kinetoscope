@@ -8,7 +8,20 @@
 </head>
 <body>
     <div id="movie-content" class="container">
-        <img id="movie-backdrop" src="" alt="Movie Backdrop">
+        <!-- Now Playing Title -->
+        <p class="now-playing-title">
+            <a href="index.html" class="now-playing-link">
+                <img src="https://trailer-storage-bucket.s3.us-east-2.amazonaws.com/back-arrow-1.svg" alt="Back Arrow" class="back-arrow-img">
+                Now Playing
+            </a>
+        </p>
+        <!-- Movie graphic with play button -->
+        <div class="movie-poster-container">
+            <img id="movie-backdrop" src="" alt="Movie Backdrop">
+            <a href="#" class="play-button-link">
+                <img src="https://trailer-storage-bucket.s3.us-east-2.amazonaws.com/play-button.svg" alt="Play Button" class="play-button">
+            </a>
+        </div>
         <div class="header-with-back">
             <h1 id="movie-title">Loading...</h1>
         </div>
@@ -127,6 +140,7 @@
 
         // Initialize the page
         document.addEventListener("DOMContentLoaded", () => {
+
             const filmId = new URLSearchParams(window.location.search).get("filmId");
             if (filmId) {
                 fetchMovieDetails(filmId);
