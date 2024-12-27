@@ -42,7 +42,7 @@
             const date = new Date(dateString);
             const weekday = date.toLocaleDateString(undefined, { weekday: "short" });
             const month = date.toLocaleDateString(undefined, { month: "short" });
-            const day = date.toLocaleDateString(undefined, { day: "2-digit" });
+            const day = date.toLocaleDateString(undefined, { day: "numeric" });
             return `${weekday} ${month}. ${day}`;
         }
 
