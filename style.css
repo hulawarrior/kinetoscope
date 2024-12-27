@@ -168,16 +168,17 @@ a {
 }
 
 #sticky-banner {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    width: 100%;
-    background-color: black; /* Solid black background */
-    color: white; /* White text color */
-    text-align: center;
-    padding: 10px 0; /* Consistent padding */
-    font-size: 16px;
-    z-index: 1000;
+    position: fixed; /* Ensures the banner stays fixed at the bottom */
+    bottom: 0; /* Position it at the very bottom */
+    left: 0; /* Align it to the left edge */
+    width: 100%; /* Make it span the full width */
+    background-color: black; /* Background color for the banner */
+    color: white; /* Text color */
+    text-align: center; /* Center align the text */
+    padding: 10px 0; /* Padding for vertical spacing */
+    font-size: 16px; /* Text size */
+    z-index: 1000; /* Ensure it stays on top of other elements */
+    will-change: transform; /* Improves performance for fixed elements */
 }
 
 .back-arrow {
