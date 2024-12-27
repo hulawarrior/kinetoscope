@@ -172,7 +172,7 @@ a {
     bottom: 0; /* Pins it to the bottom of the viewport */
     left: 0; /* Aligns it with the left edge */
     width: 100%; /* Ensures it spans the full width of the viewport */
-    background-color: black; /* Background color for the banner */
+    background-color: rgb(138, 1, 1); /* Background color for the banner */
     color: white; /* Text color */
     text-align: center; /* Centers text content */
     padding: 20px 0; /* Adds vertical padding for spacing */
