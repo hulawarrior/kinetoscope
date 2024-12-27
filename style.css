@@ -168,25 +168,30 @@ a {
 }
 
 #sticky-banner {
-    position: fixed; /* Stays fixed at the bottom */
-    bottom: 0; /* Positioned at the bottom */
-    left: 0; /* Aligned to the left edge */
-    width: 100%; /* Spans the full width */
-    background-color: black; /* Banner background color */
+    position: fixed; /* Ensures it's always fixed in place */
+    bottom: 0; /* Pins it to the bottom of the viewport */
+    left: 0; /* Aligns it with the left edge */
+    width: 100%; /* Ensures it spans the full width of the viewport */
+    background-color: black; /* Background color for the banner */
     color: white; /* Text color */
-    text-align: center; /* Center the content */
-    padding: 20px 0; /* Increased padding for more height */
+    text-align: center; /* Centers text content */
+    padding: 20px 0; /* Adds vertical padding for spacing */
     font-size: 16px; /* Text size */
-    z-index: 1000; /* Ensures it stays on top of other elements */
-    will-change: transform; /* Improves performance */
-    height: 40px; /* Explicit height to make it more visible */
+    z-index: 1000; /* Ensures it stays above other elements */
+    height: auto; /* Allows content to determine height */
+    min-height: 60px; /* Ensures a consistent minimum height */
+    box-sizing: border-box; /* Includes padding and borders in the height calculation */
+    will-change: transform; /* Improves rendering performance */
     border-top: 1px solid var(--secondary-color); /* Adds a white line at the top */
 }
 
-body::after {
-    content: "";
-    display: block; /* Makes the spacer take up space */
-    height: 120px; /* Matches the height of the sticky banner */
+html, body {
+    height: 100%; /* Ensures the body stretches to the full viewport height */
+}
+
+body {
+    margin: 0; /* Removes any default margin that could cause gaps */
+    padding-bottom: 60px; /* Matches or slightly exceeds the banner's height */
 }
 
 .back-arrow {
