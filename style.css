@@ -1,29 +1,36 @@
 :root {
     /* === Global Variables === */
+    
+    /*ALIGNMENT/SIZING*/
     --poster-gap-h: 0px; /* Space between the poster image and its associated text */
     --poster-gap-v: 0px;
     --text-spacing: 0px; /* Space between elements within text blocks */
     --back-arrow-width: 8px;
     --play-button-width: 50px;
-
-    
+    --poster-width: 120px; /* Fixed width for movie posters */
     --corner-radius: 10px; /* Rounded corners for posters, buttons, etc. */
-    
-    --primary-color: #fff; /* Main text color, typically used for titles and body text */
-    --secondary-color: #333; /* Secondary color for elements like dates or buttons */
+    --now-playing-top-margin: 0px; /* Adjust the value as needed */
+    --button-padding: 10px 10px; /* Padding inside buttons for spacing */
 
+    /*TEXT*/
     --body-text-weight: 400; /* Font weight for general body text (normal weight) */
     --header-text-weight: 400; /* Font weight for headers */
-
     --header-text-size: 30px; /* Fixed font size for main headings */
     --body-text-size: 16px; /* Fixed font size for general body text */
-
-    --poster-width: 120px; /* Fixed width for movie posters */
-    --button-padding: 10px 10px; /* Padding inside buttons for spacing */
     --button-font-size: 16px; /* Fixed font size for button text */
 
-    --now-playing-top-margin: 0px; /* Adjust the value as needed */
+    /*COLOR*/
+    --primary-color: #fff; /* Main text color, typically used for titles and body text */
+    --secondary-color: #333; /* Secondary color for elements like dates or buttons */
+    --bg-color: #002bc6;
+
     
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 body {
@@ -48,7 +55,7 @@ body {
     display: flex; /* Flexbox layout */
     flex-direction: column; /* Stack child elements vertically */
     /* gap: 0px; Fixed space between child elements */
-    background-color: rgb(171, 45, 45); /* No background color */
+    background-color: var(--bg-color); /* No background color */
 }
 
 h1 {
