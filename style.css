@@ -1,9 +1,14 @@
 :root {
     /* === Global Variables === */
-    --corner-radius: 10px; /* Rounded corners for posters, buttons, etc. */
-    --poster-gap: 20px; /* Space between the poster image and its associated text */
-    --text-spacing: 12px; /* Space between elements within text blocks */
+    --poster-gap-h: 0px; /* Space between the poster image and its associated text */
+    --poster-gap-v: 0px;
+    --text-spacing: 0px; /* Space between elements within text blocks */
+    --back-arrow-width: 8px;
+    --play-button-width: 50px;
 
+    
+    --corner-radius: 10px; /* Rounded corners for posters, buttons, etc. */
+    
     --primary-color: #fff; /* Main text color, typically used for titles and body text */
     --secondary-color: #333; /* Secondary color for elements like dates or buttons */
 
@@ -16,6 +21,9 @@
     --poster-width: 120px; /* Fixed width for movie posters */
     --button-padding: 10px 10px; /* Padding inside buttons for spacing */
     --button-font-size: 16px; /* Fixed font size for button text */
+
+    --now-playing-top-margin: 0px; /* Adjust the value as needed */
+    
 }
 
 body {
@@ -35,19 +43,19 @@ body {
 .container {
     max-width: 350px; /* Fixed maximum width for consistency */
     width: 100%; /* Ensure it spans the full width on smaller screens */
-    margin: 0 auto; /* Center the container */
-    padding: 20px; /* Space inside the container */
+    /* margin: 0 auto; Center the container */
+    /* padding: 0 px; Space inside the container */
     display: flex; /* Flexbox layout */
     flex-direction: column; /* Stack child elements vertically */
-    gap: 20px; /* Fixed space between child elements */
-    background-color: rgb(0, 0, 0); /* No background color */
+    /* gap: 0px; Fixed space between child elements */
+    background-color: rgb(171, 45, 45); /* No background color */
 }
 
 h1 {
     font-size: var(--header-text-size); /* Use fixed header font size */
     color: var(--primary-color); /* Use primary color for text */
     font-weight: var(--header-text-weight); /* Use header font weight */
-    margin-bottom: 20px; /* Fixed space below the header */
+    /* margin-bottom: 20px; Fixed space below the header */
     text-align: left; /* Align text to the left */
 }
 
@@ -61,8 +69,8 @@ ul {
 li {
     display: flex; /* Flexbox for horizontal alignment */
     align-items: flex-start; /* Align items at the top */
-    gap: var(--poster-gap); /* Fixed space between poster and text */
-    margin-bottom: 20px; /* Fixed space below each list item */
+    gap: var(--poster-gap-h); /*Fixed space between poster and text */
+    margin-bottom: var(--poster-gap-v); /* Fixed space below each list item */
 }
 
 img.poster {
@@ -73,24 +81,12 @@ img.poster {
     border-radius: var(--corner-radius); /* Rounded corners for visual consistency */
 }
 
-.showtime-text {
-    display: flex; /* Flexbox layout */
-    flex-direction: column; /* Stack text elements vertically */
-    margin: 0; /* Remove default margin */
-}
-
 .showtime-text p {
     margin: 0;
     margin-bottom: var(--text-spacing); /* Keep spacing for other paragraphs */
 }
 
-.showtime-text p:last-child {
-    display: flex;
-    gap: 10px; /* Add spacing between the time links */
-    flex-wrap: wrap; /* Allow wrapping if there are too many times */
-    margin-bottom: 0; /* Remove bottom margin */
-}
-
+/*time-buttons*/
 .time-link {
     font-size: var(--button-font-size);
     font-weight: var(--body-text-weight);
@@ -101,12 +97,6 @@ img.poster {
     text-decoration: none;
     display: inline-block;
     text-align: center;
-    box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.2); /* Optional shadow for depth */
-}
-
-.showtime-item a {
-    text-decoration: none; /* Remove default underline */
-    color: inherit; /* Inherit text color from parent */
 }
 
 .movie-title-link {
@@ -115,61 +105,17 @@ img.poster {
     font-weight: var(--body-text-weight); /* Use normal text weight */
 }
 
-a {
-    text-decoration: none; /* Remove underline or other default text decoration */
-    color: inherit; /* Make the link color inherit from its parent */
-    outline: none; /* Remove focus outlines */
-    border: none; /* Remove any borders */
-    background: none; /* Remove any background */
-}
-
-#back-button {
-    position: fixed;
-    top: 10px;
-    left: 10px;
-    z-index: 100;
-}
-
-.back-button {
-    text-decoration: none;
-    color: var(--primary-color);
-    background-color: var(--secondary-color);
-    padding: var(--button-padding);
-    border-radius: var(--corner-radius);
-    font-size: var(--button-font-size);
-    font-weight: var(--body-text-weight);
-    display: inline-block;
-}
-
-#movie-content {
-    padding: 20px; /* Keep the existing padding for consistency */
-    margin: 0 auto; /* Center the container */
-}
-
 #movie-backdrop {
     display: block;
     max-width: 100%;
     height: auto;
-    margin: 20px auto; /* Centered with top and bottom margins */
+    margin: 0 auto; /* Centered with top and bottom margins */
     border-radius: var(--corner-radius); /* Rounded corners for visual consistency */
 }
 
-/* Horizontal scrolling for showtimes */
-.showtimes-horizontal {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
-    padding: 5px 0;
-}
-
-.showtimes-horizontal a {
-    scroll-snap-align: start; /* Ensure links snap neatly */
-    white-space: nowrap; /* Prevent text from breaking to the next line */
-}
-
-#sticky-banner span {
+/*#sticky-banner span {
     margin-right: 20px; /* Add spacing between the date and the button */
-}
+/*}
 
 #sticky-banner {
     position: fixed;
@@ -180,30 +126,25 @@ a {
     color: white;
     text-align: center;
     padding: 30px 0; /* Increase padding for larger height */
-    font-size: 20px; /* Increase text size */
-    z-index: 1000;
-    min-height: 80px; /* Set a larger minimum height */
-    box-sizing: border-box;
-    border-top: 2px solid var(--secondary-color); /* Make the border more prominent */
-}
+/*    font-size: 20px; /* Increase text size */
+    /*z-index: 1000;
+    /*min-height: 80px; /* Set a larger minimum height */
+    /*box-sizing: border-box;
+    /*border-top: 2px solid var(--secondary-color); /* Make the border more prominent */
+/*}
 
-#sticky-banner a {
+/* #sticky-banner a {
     font-size: 18px; /* Increase font size of links */
-    padding: 15px 20px; /* Add more padding inside links */
-    border-radius: 10px; /* Slightly round the corners */
-    background-color: var(--secondary-color); /* Ensure consistent contrast */
-    color: var(--primary-color); /* Match text color */
-}
+    /*padding: 15px 20px; /* Add more padding inside links */
+    /*border-radius: 10px; /* Slightly round the corners */
+    /*background-color: var(--secondary-color); /* Ensure consistent contrast */
+    /*color: var(--primary-color); /* Match text color */
+/*}*/
 
-.back-arrow {
-    font-size: 24px; /* Adjust the size of the arrow */
-    margin-right: 10px; /* Add spacing between the arrow and text */
-    color: var(--primary-color); /* Match the arrow color to your theme */
-    display: inline-block; /* Align with the text */
-    vertical-align: middle; /* Center it vertically */
-}
 
+/*MOVIE INFO*/
 .now-playing-link {
+    margin-top: var(--now-playing-top-margin);
     text-decoration: none; /* Remove underline from the link */
     color: var(--primary-color); /* Match the text color to your theme */
     display: flex; /* Use flexbox to align the arrow and text */
@@ -211,9 +152,9 @@ a {
 }
 
 .back-arrow-img {
-    width: 8px; /* Adjust size */
+    width: var(--back-arrow-width); /* Adjust size */
     height: auto; /* Maintain aspect ratio */
-    margin-right: 10px; /* Space between arrow and text */
+    margin-right: var(--poster-gap-h); /* Space between arrow and text */
 }
 
 .movie-poster-container {
@@ -237,6 +178,6 @@ a {
 }
 
 .play-button {
-    width: 50px; /* Adjust the size of the play button */
+    width: var(--play-button-width); /* Adjust the size of the play button */
     height: auto; /* Maintain aspect ratio */
 }

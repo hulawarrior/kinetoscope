@@ -54,20 +54,20 @@
                 .toLowerCase();
         }
 
-        // Function to update the sticky banner with the next showtime
-        function updateStickyBanner(dateString, sessionId) {
-            const formattedDate = formatDate(dateString);
-            const formattedTime = formatTime(dateString);
-            const banner = document.getElementById("sticky-banner");
+        // // Function to update the sticky banner with the next showtime
+        // function updateStickyBanner(dateString, sessionId) {
+        //     const formattedDate = formatDate(dateString);
+        //     const formattedTime = formatTime(dateString);
+        //     const banner = document.getElementById("sticky-banner");
 
-            // Create the sticky banner content
-            banner.innerHTML = `
-                <span>${formattedDate}</span>
-                <a href="purchase.html?sessionId=${sessionId}" class="time-link">
-                    ${formattedTime}
-                </a>
-            `;
-        }
+        //     // Create the sticky banner content
+        //     banner.innerHTML = `
+        //         <span>${formattedDate}</span>
+        //         <a href="purchase.html?sessionId=${sessionId}" class="time-link">
+        //             ${formattedTime}
+        //         </a>
+        //     `;
+        // }
 
         // Fetch movie details
         async function fetchMovieDetails(filmId) {
