@@ -26,7 +26,7 @@
             </a>
         
             <!-- Video iframe -->
-            <iframe id="trailer-iframe" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen style="display: none;"></iframe>
+            <iframe id="trailer-iframe" src="" frameborder="0" allow="autoplay; fullscreen" allowfullscreen style="display: none;"></iframe>
         </div>
         <div class="header-with-back">
             <h1 id="movie-title">Loading...</h1>
@@ -124,15 +124,17 @@
                         trailerIframe.src = film.FilmTrailerUrl;
                         trailerIframe.style.display = "block";
 
-                        // Request fullscreen for the trailer container
-                        const trailerContainer = document.querySelector(".movie-poster-container");
-                        if (trailerContainer.requestFullscreen) {
-                            await trailerContainer.requestFullscreen();
-                        } else if (trailerContainer.webkitRequestFullscreen) { // Safari
-                            await trailerContainer.webkitRequestFullscreen();
-                        } else if (trailerContainer.msRequestFullscreen) { // IE/Edge
-                            await trailerContainer.msRequestFullscreen();
+                        // Request fullscreen for the iframe on mobile
+                        if (trailerIframe.requestFullscreen) {
+                            await trailerIframe.requestFullscreen();
+                        } else if (trailerIframe.webkitRequestFullscreen) { // Safari
+                            await trailerIframe.webkitRequestFullscreen();
+                        } else if (trailerIframe.msRequestFullscreen) { // IE/Edge
+                            await trailerIframe.msRequestFullscreen();
                         }
+
+                        // Ensure autoplay works by scrolling into view
+                        trailerIframe.scrollIntoView({ behavior: "smooth" });
                     });
                 } else {
                     playButton.style.display = "none"; // Hide the play button if no trailer
