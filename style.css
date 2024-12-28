@@ -7,15 +7,15 @@
 
     /*ALIGNMENT/SIZING*/
     --max-width: 350px;
-    --horizontal-spacing: 0px;
+    --horizontal-spacing: 10px;
 
-    --poster-gap-h: 0px; /* Space between the poster image and its associated text */
-    --poster-gap-v: 0px;
+    --poster-gap-h: 10px; /* Space between the poster image and its associated text */
+    --poster-gap-v: 6px;
 
-    --corner-button-radius: 0px; /* Rounded corners for posters, buttons, etc. */
+    --corner-button-radius: 5px; /* Rounded corners for posters, buttons, etc. */
     --corner-graphic-radius: 0px;
 
-    --text-spacing: 0px; /* Space between elements within text blocks */
+    --text-spacing: 10px; /* Space between elements within text blocks */
     
     --back-arrow-width: 8px;
     --play-button-width: 30px;
