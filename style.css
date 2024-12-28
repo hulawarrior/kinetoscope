@@ -12,11 +12,14 @@
     --poster-gap-h: 0px; /* Space between the poster image and its associated text */
     --poster-gap-v: 0px;
 
-    --corner-radius: 0px; /* Rounded corners for posters, buttons, etc. */
+    --corner-button-radius: 0px; /* Rounded corners for posters, buttons, etc. */
+    --corner-graphic-radius: 0px;
 
     --text-spacing: 0px; /* Space between elements within text blocks */
+    
     --back-arrow-width: 8px;
-    --play-button-width: 50px;
+    --play-button-width: 30px;
+    
     --poster-width: 120px; /* Fixed width for movie posters */
     --now-playing-top-margin: 0px; /* Adjust the value as needed */
     --button-padding: 10px 10px; /* Padding inside buttons for spacing */
@@ -24,7 +27,7 @@
 
     /*TEXT*/
     --font: Inter, Arial, sans-serif;
-    --body-text-weight: 400; /* Font weight for general body text (normal weight) */
+    --body-text-weight: 400; /* Fo68nt weight for general body text (normal weight) */
     --header-text-weight: 400; /* Font weight for headers */
     --header-text-size: 30px; /* Fixed font size for main headings */
     --body-text-size: 16px; /* Fixed font size for general body text */
@@ -91,7 +94,7 @@ img.poster {
     height: auto; /* Maintain the image's aspect ratio */
     object-fit: cover; /* Ensure the image fills the dimensions */
     margin: 0; /* Remove default margin */
-    border-radius: var(--corner-radius); /* Rounded corners for visual consistency */
+    border-radius: var(--corner-graphic-radius); /* Rounded corners for visual consistency */
 }
 
 .showtime-text p {
@@ -106,7 +109,7 @@ img.poster {
     color: var(--primary-color);
     background-color: var(--secondary-color);
     padding: var(--button-padding);
-    border-radius: var(--corner-radius);
+    border-radius: var(--corner-button-radius);
     text-decoration: none;
     display: inline-block;
     text-align: center;
@@ -123,7 +126,7 @@ img.poster {
     max-width: 100%;
     height: auto;
     margin: 0 auto; /* Centered with top and bottom margins */
-    border-radius: var(--corner-radius); /* Rounded corners for visual consistency */
+    border-radius: var(--corner-graphic-radius); /* Rounded corners for visual consistency */
 }
 
 /*#sticky-banner span {
