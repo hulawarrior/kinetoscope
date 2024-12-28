@@ -17,13 +17,16 @@
         </p>
         <!-- Movie graphic with play button -->
         <div class="movie-poster-container">
+            <!-- Poster graphic acting as the video thumbnail -->
             <img id="movie-backdrop" src="" alt="Movie Backdrop">
+        
+            <!-- Play button interface -->
             <a href="#" class="play-button-link">
                 <img src="icons/play-button-3.svg" alt="Play Button" class="play-button">
             </a>
-        </div>
-        <div id="trailer-container" style="display: none;">
-            <iframe id="trailer-iframe" width="560" height="315" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
+        
+            <!-- Video iframe -->
+            <iframe id="trailer-iframe" src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen style="display: none;"></iframe>
         </div>
         <div class="header-with-back">
             <h1 id="movie-title">Loading...</h1>
@@ -107,16 +110,16 @@
 
                 // Handle play button and trailer logic
                 const playButton = document.querySelector(".play-button-link");
+                const movieBackdrop = document.getElementById("movie-backdrop");
+                const trailerIframe = document.getElementById("trailer-iframe");
 
                 if (film.FilmTrailerUrl) {
-                    const trailerContainer = document.getElementById("trailer-container");
-                    const trailerIframe = document.getElementById("trailer-iframe");
-
                     playButton.addEventListener("click", (event) => {
                         event.preventDefault();
-                        trailerIframe.src = film.FilmTrailerUrl; // Set trailer URL
-                        trailerContainer.style.display = "block"; // Show trailer container
-                        trailerIframe.scrollIntoView({ behavior: "smooth" }); // Scroll to the trailer
+                        movieBackdrop.style.display = "none"; // Hide the poster
+                        playButton.style.display = "none"; // Hide the play button
+                        trailerIframe.src = film.FilmTrailerUrl; // Set the trailer URL
+                        trailerIframe.style.display = "block"; // Show the video
                     });
                 } else {
                     playButton.style.display = "none"; // Hide the play button if no trailer
