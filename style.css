@@ -190,7 +190,7 @@ img.poster {
     height: 100%;
     object-fit: cover; /* Cover the container while preserving aspect ratio */
     z-index: 1;
-    display: block; /* Initially show the poster */
+    display: block; /* Ensure the poster is visible */
 }
 
 .play-button-link {
@@ -198,9 +198,15 @@ img.poster {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    z-index: 2;
-    text-decoration: none;
-    cursor: pointer;
+    z-index: 2; /* Ensure it appears above the poster */
+    text-decoration: none; /* Remove underline */
+    cursor: pointer; /* Indicate interactivity */
+}
+
+.play-button {
+    width: 30px; /* Adjust size as needed */
+    height: auto; /* Maintain aspect ratio */
+    pointer-events: none; /* Prevent events on the image itself */
 }
 
 #trailer-iframe {
@@ -209,7 +215,7 @@ img.poster {
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: 3;
+    z-index: 3; /* Ensure it appears above the poster when shown */
     border: none;
     display: none; /* Initially hide the video */
 }
