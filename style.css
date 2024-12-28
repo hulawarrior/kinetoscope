@@ -3,7 +3,7 @@
     /*COLOR*/
     --primary-color: #f1a000; /* Main text color, typically used for titles and body text */
     --secondary-color: #3d8020; /* Secondary color for elements like dates or buttons */
-    --bg-color: #4f0c6b;
+    --bg-color: #bd561a;
 
     /*ALIGNMENT/SIZING*/
     --max-width: 350px;
@@ -182,6 +182,17 @@ img.poster {
     background-color: black; /* Black background for video */
 }
 
+#trailer-iframe {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1; /* Behind the poster and play button */
+    border: none;
+    pointer-events: none; /* Prevent clicks on the iframe initially */
+}
+
 #movie-backdrop {
     position: absolute;
     top: 0;
@@ -189,7 +200,7 @@ img.poster {
     width: 100%;
     height: 100%;
     object-fit: cover; /* Cover the container while preserving aspect ratio */
-    z-index: 1;
+    z-index: 2; /* Above the video but below the play button */
     display: block; /* Ensure the poster is visible */
 }
 
@@ -198,24 +209,12 @@ img.poster {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    z-index: 2; /* Ensure it appears above the poster */
-    text-decoration: none; /* Remove underline */
-    cursor: pointer; /* Indicate interactivity */
+    z-index: 3; /* Above both the poster and video */
+    text-decoration: none;
+    cursor: pointer; /* Show a pointer on hover */
 }
 
 .play-button {
-    width: 30px; /* Adjust size as needed */
+    width: 50px; /* Adjust size as needed */
     height: auto; /* Maintain aspect ratio */
-    pointer-events: none; /* Prevent events on the image itself */
-}
-
-#trailer-iframe {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: 3; /* Ensure it appears above the poster when shown */
-    border: none;
-    display: none; /* Initially hide the video */
 }

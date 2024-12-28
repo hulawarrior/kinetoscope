@@ -17,16 +17,16 @@
         </p>
         <!-- Movie graphic with play button -->
         <div class="movie-poster-container">
-            <!-- Poster graphic acting as the video thumbnail -->
+            <!-- Video iframe (behind the graphic) -->
+            <iframe id="trailer-iframe" src="" frameborder="0" allow="autoplay; fullscreen" allowfullscreen muted></iframe>
+        
+            <!-- Poster graphic -->
             <img id="movie-backdrop" src="" alt="Movie Backdrop">
         
             <!-- Play button interface -->
             <a href="#" class="play-button-link">
                 <img src="icons/play-button-3.svg" alt="Play Button" class="play-button">
             </a>
-        
-            <!-- Video iframe -->
-            <iframe id="trailer-iframe" src="" frameborder="0" allow="autoplay; fullscreen" allowfullscreen style="display: none;"></iframe>
         </div>
         <div class="header-with-back">
             <h1 id="movie-title">Loading...</h1>
@@ -114,27 +114,23 @@
                 const trailerIframe = document.getElementById("trailer-iframe");
 
                 if (film.FilmTrailerUrl) {
+                    trailerIframe.src = film.FilmTrailerUrl; // Set the trailer URL
                     playButton.style.display = "block"; // Ensure the play button is visible
-                    playButton.addEventListener("click", async (event) => {
+                    playButton.addEventListener("click", (event) => {
                         event.preventDefault();
 
-                        // Hide the poster and play button, show the video
+                        // Unmute and play the video
+                        trailerIframe.contentWindow.postMessage(
+                            '{"event":"command","func":"playVideo","args":""}',
+                            "*"
+                        );
+
+                        // Hide the poster and play button
                         movieBackdrop.style.display = "none";
                         playButton.style.display = "none";
-                        trailerIframe.src = film.FilmTrailerUrl;
-                        trailerIframe.style.display = "block";
 
-                        // Request fullscreen for the iframe on mobile
-                        if (trailerIframe.requestFullscreen) {
-                            await trailerIframe.requestFullscreen();
-                        } else if (trailerIframe.webkitRequestFullscreen) { // Safari
-                            await trailerIframe.webkitRequestFullscreen();
-                        } else if (trailerIframe.msRequestFullscreen) { // IE/Edge
-                            await trailerIframe.msRequestFullscreen();
-                        }
-
-                        // Ensure autoplay works by scrolling into view
-                        trailerIframe.scrollIntoView({ behavior: "smooth" });
+                        // Allow clicks on the iframe
+                        trailerIframe.style.pointerEvents = "auto";
                     });
                 } else {
                     playButton.style.display = "none"; // Hide the play button if no trailer
