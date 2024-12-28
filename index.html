@@ -98,7 +98,13 @@
                 const film = films[showtime.FilmId];
                 if (!film) return;
 
-                const date = new Date(showtime.PreShowStartTime).toDateString();
+                const dateObj = new Date(showtime.PreShowStartTime);
+                const date = dateObj.toLocaleDateString(undefined, {
+                    weekday: 'short',
+                    month: 'short',
+                    day: 'numeric',
+                }).replace(',', ''); // Remove comma
+
                 const key = `${showtime.FilmId}-${date}`;
 
                 if (!groupedShowtimes[key]) {
@@ -110,7 +116,13 @@
                 }
 
                 groupedShowtimes[key].times.push({
-                    time: new Date(showtime.PreShowStartTime).toLocaleTimeString(),
+                    time: dateObj
+                        .toLocaleTimeString([], {
+                            hour: 'numeric',
+                            minute: '2-digit',
+                            hour12: true,
+                        })
+                        .toLowerCase(), // Lowercase am/pm
                     sessionId: showtime.Id,
                 });
             });
@@ -118,9 +130,16 @@
             Object.values(groupedShowtimes).forEach(({ film, date, times }) => {
                 const posterUrl = film.FilmPosterUrl || film.FilmPosterThumbnailUrl || "https://via.placeholder.com/300x400?text=Poster+Not+Available";
 
+                const timesHtml = times
+                    .map(
+                        time =>
+                            `<a href="purchase.html?sessionId=${time.sessionId}" class="time-link">${time.time}</a>`
+                    )
+                    .join("");
+
                 const itemHtml = `
                     <li class="showtime-item">
-                        <a onclick="playTrailer('${film.Id}')">
+                        <a href="trailer.html?filmId=${film.Id}">
                             <img class="poster" src="${posterUrl}" alt="${film.Title}">
                         </a>
                         <div class="showtime-text">
@@ -128,6 +147,7 @@
                                 <a onclick="playTrailer('${film.Id}')" class="movie-title-link">${film.Title}</a>
                             </p>
                             <p>${date}</p>
+                            <div class="showtimes-horizontal">${timesHtml}</div>
                         </div>
                     </li>
                 `;

@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trailer</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: black;
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        .close-btn {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            font-size: 24px;
+            color: white;
+            background: rgba(0, 0, 0, 0.5);
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            z-index: 1000;
+        }
+        .close-btn:hover {
+            background: rgba(255, 255, 255, 0.8);
+            color: black;
+        }
+    </style>
+</head>
+<body>
+    <!-- Close Button -->
+    <button class="close-btn" onclick="goBack()">×</button>
+
+    <!-- Trailer Video -->
+    <video id="trailer-video" autoplay playsinline muted></video>
+
+    <script>
+        const apiKey = "n06hg935gmg68bdv2526wkyjg4"; // Replace with your actual API key
+        const filmApiUrl = "https://api.uswest.veezi.com/v4/film";
+
+        async function loadTrailer() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const filmId = urlParams.get("filmId");
+
+            if (!filmId) {
+                alert("No trailer available.");
+                return;
+            }
+
+            try {
+                const response = await fetch(`${filmApiUrl}/${filmId}`, {
+                    headers: { "VeeziAccessToken": apiKey }
+                });
+
+                if (!response.ok) {
+                    throw new Error("Failed to fetch film data.");
+                }
+
+                const film = await response.json();
+                if (film.FilmTrailerUrl) {
+                    const video = document.getElementById("trailer-video");
+                    video.src = film.FilmTrailerUrl;
+
+                    // Automatically exit fullscreen on end
+                    video.onended = () => {
+                        if (document.fullscreenElement) {
+                            document.exitFullscreen();
+                        }
+                    };
+
+                    // Enter fullscreen
+                    if (video.requestFullscreen) {
+                        video.requestFullscreen();
+                    } else if (video.webkitEnterFullscreen) {
+                        video.webkitEnterFullscreen();
+                    } else if (video.msRequestFullscreen) {
+                        video.msRequestFullscreen();
+                    }
+                } else {
+                    alert("Trailer not available.");
+                }
+            } catch (error) {
+                console.error("Error loading trailer:", error);
+                alert("Unable to load trailer.");
+            }
+        }
+
+        // Go back to the main page
+        function goBack() {
+            window.location.href = "index.html";
+        }
+
+        document.addEventListener("DOMContentLoaded", loadTrailer);
+    </script>
+</body>
+</html>
