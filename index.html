@@ -130,7 +130,6 @@
             Object.values(groupedShowtimes).forEach(({ film, date, times }) => {
                 const posterUrl = film.FilmPosterUrl || film.FilmPosterThumbnailUrl || "https://via.placeholder.com/300x400?text=Poster+Not+Available";
 
-                // Extract year from OpeningDate
                 const releaseYear = film.OpeningDate ? new Date(film.OpeningDate).getFullYear() : "N/A";
 
                 const timesHtml = times
@@ -142,12 +141,12 @@
 
                 const itemHtml = `
                     <li class="showtime-item">
-                        <a href="trailer.html?filmId=${film.Id}">
+                        <a href="movie.html?filmId=${film.Id}">
                             <img class="poster" src="${posterUrl}" alt="${film.Title}">
                         </a>
                         <div class="showtime-text">
                             <p>
-                                <a href="trailer.html?filmId=${film.Id}" class="movie-title-link">${film.Title} (${releaseYear})</a>
+                                <a href="movie.html?filmId=${film.Id}" class="movie-title-link">${film.Title} (${releaseYear})</a>
                             </p>
                             <p>${date}</p>
                             <div class="showtimes-horizontal">${timesHtml}</div>

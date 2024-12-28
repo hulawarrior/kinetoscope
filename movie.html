@@ -11,7 +11,7 @@
         <!-- Now Playing Title -->
         <p class="now-playing-title">
             <a href="index.html" class="now-playing-link">
-                <img src="icons/back-arrow-2.svg" alt="Back Arrow" class="back-arrow-img">
+                <img src="icons/back-arrow-3.svg" alt="Back Arrow" class="back-arrow-img">
                 Now Playing
             </a>
         </p>
@@ -97,18 +97,34 @@
 
                 const film = await response.json();
 
+                // Extract Director and Actors
+                const director = film.People
+                    .filter(person => person.Role === "Director")
+                    .map(person => `${person.FirstName} ${person.LastName}`)
+                    .join(", ") || "Unknown";
+
+                const actors = film.People
+                    .filter(person => person.Role === "Actor")
+                    .map(person => `${person.FirstName} ${person.LastName}`)
+                    .join(", ") || "Unknown";
+
+                // Format opening date with year
+                const openingDate = film.OpeningDate
+                    ? `${formatDate(film.OpeningDate)} (${new Date(film.OpeningDate).getFullYear()})`
+                    : "Unknown";
+
                 // Update movie details
                 document.getElementById("movie-title").textContent = film.Title || "Unknown Title";
                 document.getElementById("movie-backdrop").src =
                     film.BackdropImageUrl || "https://via.placeholder.com/800x400?text=Backdrop+Not+Available";
                 document.getElementById("movie-synopsis").textContent = film.Synopsis || "No synopsis available.";
                 document.getElementById("movie-details").innerHTML = `
-                    <p><strong>Genre:</strong> ${film.Genre || "Unknown"}</p>
-                    <p><strong>Duration:</strong> ${film.Duration || "Unknown"} minutes</p>
-                    <p><strong>Rating:</strong> ${film.Rating || "Not Rated"}</p>
-                    <p><strong>Opening Date:</strong> ${
-                        film.OpeningDate ? formatDate(film.OpeningDate) : "Unknown"
-                    }</p>
+                    <p>Genre: ${film.Genre || "Unknown"}</p>
+                    <p>Runtime: ${film.Duration || "Unknown"} minutes</p>
+                    <p>Rating: ${film.Rating || "Not Rated"}</p>
+                    <p>Opening Date: ${openingDate}</p>
+                    <p>Director: ${director}</p>
+                    <p>Starring: ${actors}</p>
                 `;
 
                 // Handle play button and trailer logic
