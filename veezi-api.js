@@ -43,6 +43,17 @@ async function fetchData(url, headers) {
     }
 }
 
+// Fetch details of a single film using its ID
+async function fetchFilmDetails(filmId) {
+    try {
+        const film = await fetchData(`${filmApiUrl}/${filmId}`, { "VeeziAccessToken": apiKey });
+        return film;
+    } catch (error) {
+        console.error("Error fetching film details:", error.message);
+        throw error;
+    }
+}
+
 function renderShowtimes(showtimes, films) {
     const list = document.getElementById("showtimes-list");
     list.innerHTML = ""; // Clear old items
