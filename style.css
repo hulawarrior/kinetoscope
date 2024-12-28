@@ -3,7 +3,7 @@
     /*COLOR*/
     --primary-color: #f1a000; /* Main text color, typically used for titles and body text */
     --secondary-color: #3d8020; /* Secondary color for elements like dates or buttons */
-    --bg-color: #bd561a;
+    --bg-color: #44ff00;
 
     /*ALIGNMENT/SIZING*/
     --max-width: 350px;
@@ -178,19 +178,19 @@ img.poster {
     width: 100%;
     height: 0;
     padding-top: 56.25%; /* 16:9 aspect ratio */
-    overflow: hidden; /* Ensure content stays inside the container */
+    overflow: hidden;
     background-color: black; /* Black background for video */
 }
 
-#trailer-iframe {
+#trailer-video {
     position: absolute;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: 1; /* Behind the poster and play button */
-    border: none;
-    pointer-events: none; /* Prevent clicks on the iframe initially */
+    z-index: 1; /* Behind the poster and play button initially */
+    display: none; /* Initially hidden */
+    object-fit: cover; /* Ensure the video fills the container */
 }
 
 #movie-backdrop {
@@ -201,7 +201,7 @@ img.poster {
     height: 100%;
     object-fit: cover; /* Cover the container while preserving aspect ratio */
     z-index: 2; /* Above the video but below the play button */
-    display: block; /* Ensure the poster is visible */
+    display: block;
 }
 
 .play-button-link {

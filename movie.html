@@ -17,8 +17,11 @@
         </p>
         <!-- Movie graphic with play button -->
         <div class="movie-poster-container">
-            <!-- Video iframe (behind the graphic) -->
-            <iframe id="trailer-iframe" src="" frameborder="0" allow="autoplay; fullscreen" allowfullscreen muted></iframe>
+            <!-- Video element (hidden behind poster initially) -->
+            <video id="trailer-video" playsinline muted style="display: none;">
+                <source src="" type="video/mp4">
+                Your browser does not support the video tag.
+            </video>
         
             <!-- Poster graphic -->
             <img id="movie-backdrop" src="" alt="Movie Backdrop">
@@ -111,26 +114,35 @@
                 // Handle play button and trailer logic
                 const playButton = document.querySelector(".play-button-link");
                 const movieBackdrop = document.getElementById("movie-backdrop");
-                const trailerIframe = document.getElementById("trailer-iframe");
+                const trailerVideo = document.getElementById("trailer-video");
 
                 if (film.FilmTrailerUrl) {
-                    trailerIframe.src = film.FilmTrailerUrl; // Set the trailer URL
+                    trailerVideo.querySelector("source").src = film.FilmTrailerUrl; // Set the trailer URL
+                    trailerVideo.load(); // Preload the video
+
                     playButton.style.display = "block"; // Ensure the play button is visible
-                    playButton.addEventListener("click", (event) => {
+                    playButton.addEventListener("click", async (event) => {
                         event.preventDefault();
 
                         // Unmute and play the video
-                        trailerIframe.contentWindow.postMessage(
-                            '{"event":"command","func":"playVideo","args":""}',
-                            "*"
-                        );
+                        trailerVideo.style.display = "block";
+                        movieBackdrop.style.display = "none"; // Hide the poster
+                        playButton.style.display = "none"; // Hide the play button
 
-                        // Hide the poster and play button
-                        movieBackdrop.style.display = "none";
-                        playButton.style.display = "none";
+                        try {
+                            await trailerVideo.play();
 
-                        // Allow clicks on the iframe
-                        trailerIframe.style.pointerEvents = "auto";
+                            // Request fullscreen for the video
+                            if (trailerVideo.requestFullscreen) {
+                                await trailerVideo.requestFullscreen();
+                            } else if (trailerVideo.webkitEnterFullscreen) { // Safari
+                                trailerVideo.webkitEnterFullscreen();
+                            } else if (trailerVideo.msRequestFullscreen) { // IE/Edge
+                                await trailerVideo.msRequestFullscreen();
+                            }
+                        } catch (error) {
+                            console.error("Error attempting to play video:", error);
+                        }
                     });
                 } else {
                     playButton.style.display = "none"; // Hide the play button if no trailer
