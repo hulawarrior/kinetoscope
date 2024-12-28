@@ -114,12 +114,25 @@
                 const trailerIframe = document.getElementById("trailer-iframe");
 
                 if (film.FilmTrailerUrl) {
-                    playButton.addEventListener("click", (event) => {
+                    playButton.style.display = "block"; // Ensure the play button is visible
+                    playButton.addEventListener("click", async (event) => {
                         event.preventDefault();
-                        movieBackdrop.style.display = "none"; // Hide the poster
-                        playButton.style.display = "none"; // Hide the play button
-                        trailerIframe.src = film.FilmTrailerUrl; // Set the trailer URL
-                        trailerIframe.style.display = "block"; // Show the video
+
+                        // Hide the poster and play button, show the video
+                        movieBackdrop.style.display = "none";
+                        playButton.style.display = "none";
+                        trailerIframe.src = film.FilmTrailerUrl;
+                        trailerIframe.style.display = "block";
+
+                        // Request fullscreen for the trailer container
+                        const trailerContainer = document.querySelector(".movie-poster-container");
+                        if (trailerContainer.requestFullscreen) {
+                            await trailerContainer.requestFullscreen();
+                        } else if (trailerContainer.webkitRequestFullscreen) { // Safari
+                            await trailerContainer.webkitRequestFullscreen();
+                        } else if (trailerContainer.msRequestFullscreen) { // IE/Edge
+                            await trailerContainer.msRequestFullscreen();
+                        }
                     });
                 } else {
                     playButton.style.display = "none"; // Hide the play button if no trailer
