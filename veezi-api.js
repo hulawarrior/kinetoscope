@@ -54,74 +54,20 @@ async function fetchFilmDetails(filmId) {
     }
 }
 
-function renderShowtimes(showtimes, films) {
-    const list = document.getElementById("showtimes-list");
-    list.innerHTML = ""; // Clear old items
-
-    if (!showtimes.length) {
-        list.innerHTML = "<li>No showtimes available.</li>";
-        return;
-    }
-
-    // Get the current time
-    const now = new Date();
-
-    // Filter and sort showtimes
-    const upcomingShowtimes = showtimes
-        .filter(showtime => new Date(showtime.PreShowStartTime) >= now)
-        .sort((a, b) => new Date(a.PreShowStartTime) - new Date(b.PreShowStartTime));
-
-    // Group showtimes by movie and date
-    const groupedShowtimes = {};
-    upcomingShowtimes.forEach(showtime => {
-        const film = films[showtime.FilmId];
-        if (!film) return;
-
-        const date = formatDate(showtime.PreShowStartTime);
-        const key = `${showtime.FilmId}-${date}`;
-
-        if (!groupedShowtimes[key]) {
-            groupedShowtimes[key] = {
-                film,
-                date,
-                times: [],
-            };
-        }
-
-        groupedShowtimes[key].times.push({
-            time: formatTime(showtime.PreShowStartTime),
-            sessionId: showtime.Id,
-        });
-    });
-
-    // Render the grouped showtimes
-    Object.values(groupedShowtimes).forEach(({ film, date, times }) => {
-        const posterUrl = film.FilmPosterUrl || film.FilmPosterThumbnailUrl || "https://via.placeholder.com/300x400?text=Poster+Not+Available";
-
-        const timesHtml = times
-            .map(
-                time =>
-                    `<a href="purchase.html?sessionId=${time.sessionId}" class="time-link">${time.time}</a>`
-            )
-            .join("");
-
-        const itemHtml = `
-            <li class="showtime-item">
-                <a href="movie.html?filmId=${film.Id}">
-                    <img class="poster" src="${posterUrl}" alt="${film.Title}">
-                </a>
-                <div class="showtime-text">
-                    <p>
-                        <a href="movie.html?filmId=${film.Id}" class="movie-title-link">${film.Title}</a>
-                    </p>
-                    <p>${date}</p>
-                    <div class="showtimes-horizontal">${timesHtml}</div>
-                </div>
-            </li>
-        `;
-        list.insertAdjacentHTML("beforeend", itemHtml);
-    });
-}
+const itemHtml = `
+    <li class="showtime-item">
+        <a onclick="playTrailer('${film.Id}')">
+            <img class="poster" src="${posterUrl}" alt="${film.Title}">
+        </a>
+        <div class="showtime-text">
+            <p>
+                <a onclick="playTrailer('${film.Id}')" class="movie-title-link">${film.Title}</a>
+            </p>
+            <p>${date}</p>
+            <div class="showtimes-horizontal">${timesHtml}</div>
+        </div>
+    </li>
+`;
 
 async function init() {
     try {

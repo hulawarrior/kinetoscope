@@ -129,6 +129,10 @@ img.poster {
     border-radius: var(--corner-graphic-radius); /* Rounded corners for visual consistency */
 }
 
+video {
+    object-fit: cover; /* Ensure the video fills the screen */
+}
+
 /*#sticky-banner span {
     margin-right: 20px; /* Add spacing between the date and the button */
 /*}

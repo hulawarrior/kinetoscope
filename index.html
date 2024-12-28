@@ -8,11 +8,151 @@
 </head>
 <body>
     <div class="container">
-        <!-- <h1 class="now-playing">Now Playing</h1> -->
         <ul id="showtimes-list">
             <!-- Showtimes will be dynamically loaded here -->
         </ul>
     </div>
-    <script src="veezi-api.js"></script>
+    <script>
+        const apiKey = "n06hg935gmg68bdv2526wkyjg4"; // Replace with your actual API key
+        const filmApiUrl = "https://api.uswest.veezi.com/v4/film";
+        const sessionApiUrl = "https://api.uswest.veezi.com/v1/session";
+
+        async function playTrailer(filmId) {
+            try {
+                const response = await fetch(`${filmApiUrl}/${filmId}`, {
+                    headers: { "VeeziAccessToken": apiKey }
+                });
+
+                if (!response.ok) {
+                    throw new Error("Failed to fetch film data.");
+                }
+
+                const film = await response.json();
+
+                if (film.FilmTrailerUrl) {
+                    const trailerVideo = document.createElement("video");
+                    trailerVideo.src = film.FilmTrailerUrl;
+                    trailerVideo.controls = true;
+                    trailerVideo.autoplay = true;
+                    trailerVideo.style.width = "100%";
+                    trailerVideo.style.height = "100%";
+                    trailerVideo.style.position = "fixed";
+                    trailerVideo.style.top = "0";
+                    trailerVideo.style.left = "0";
+                    trailerVideo.style.zIndex = "1000";
+                    trailerVideo.style.backgroundColor = "black";
+
+                    document.body.appendChild(trailerVideo);
+
+                    // Remove video on end or click
+                    trailerVideo.onended = () => document.body.removeChild(trailerVideo);
+                    trailerVideo.onclick = () => document.body.removeChild(trailerVideo);
+
+                    // Request fullscreen
+                    if (trailerVideo.requestFullscreen) {
+                        trailerVideo.requestFullscreen();
+                    } else if (trailerVideo.webkitEnterFullscreen) {
+                        trailerVideo.webkitEnterFullscreen();
+                    } else if (trailerVideo.msRequestFullscreen) {
+                        trailerVideo.msRequestFullscreen();
+                    }
+                } else {
+                    alert("Trailer not available for this film.");
+                }
+            } catch (error) {
+                console.error("Error playing trailer:", error);
+                alert("Unable to play trailer.");
+            }
+        }
+
+        async function fetchData(url, headers) {
+            try {
+                const response = await fetch(url, { method: "GET", headers });
+                if (!response.ok) {
+                    console.error(`Error: ${response.status} - ${response.statusText}`);
+                    throw new Error(`API request failed with status ${response.status}`);
+                }
+                return await response.json();
+            } catch (error) {
+                console.error("Fetch data error:", error.message);
+                throw error;
+            }
+        }
+
+        function renderShowtimes(showtimes, films) {
+            const list = document.getElementById("showtimes-list");
+            list.innerHTML = ""; // Clear old items
+
+            if (!showtimes.length) {
+                list.innerHTML = "<li>No showtimes available.</li>";
+                return;
+            }
+
+            const now = new Date();
+            const upcomingShowtimes = showtimes
+                .filter(showtime => new Date(showtime.PreShowStartTime) >= now)
+                .sort((a, b) => new Date(a.PreShowStartTime) - new Date(b.PreShowStartTime));
+
+            const groupedShowtimes = {};
+            upcomingShowtimes.forEach(showtime => {
+                const film = films[showtime.FilmId];
+                if (!film) return;
+
+                const date = new Date(showtime.PreShowStartTime).toDateString();
+                const key = `${showtime.FilmId}-${date}`;
+
+                if (!groupedShowtimes[key]) {
+                    groupedShowtimes[key] = {
+                        film,
+                        date,
+                        times: [],
+                    };
+                }
+
+                groupedShowtimes[key].times.push({
+                    time: new Date(showtime.PreShowStartTime).toLocaleTimeString(),
+                    sessionId: showtime.Id,
+                });
+            });
+
+            Object.values(groupedShowtimes).forEach(({ film, date, times }) => {
+                const posterUrl = film.FilmPosterUrl || film.FilmPosterThumbnailUrl || "https://via.placeholder.com/300x400?text=Poster+Not+Available";
+
+                const itemHtml = `
+                    <li class="showtime-item">
+                        <a onclick="playTrailer('${film.Id}')">
+                            <img class="poster" src="${posterUrl}" alt="${film.Title}">
+                        </a>
+                        <div class="showtime-text">
+                            <p>
+                                <a onclick="playTrailer('${film.Id}')" class="movie-title-link">${film.Title}</a>
+                            </p>
+                            <p>${date}</p>
+                        </div>
+                    </li>
+                `;
+                list.insertAdjacentHTML("beforeend", itemHtml);
+            });
+        }
+
+        async function init() {
+            try {
+                const films = await fetchData(filmApiUrl, { "VeeziAccessToken": apiKey });
+                const filmsMap = films.reduce((map, film) => {
+                    map[film.Id] = film;
+                    return map;
+                }, {});
+
+                const showtimes = await fetchData(sessionApiUrl, { "VeeziAccessToken": apiKey });
+                renderShowtimes(showtimes, filmsMap);
+            } catch (error) {
+                console.error("Failed to fetch data:", error.message);
+                document.getElementById("showtimes-list").innerHTML =
+                    "<li style='color: red;'>Error loading showtimes. Please try again later.</li>";
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", init);
+    </script>
 </body>
 </html>
