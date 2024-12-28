@@ -1,9 +1,9 @@
 :root {
     /* === Global Variables === */
     /*COLOR*/
-    --primary-color: #f1a000; /* Main text color, typically used for titles and body text */
-    --secondary-color: #3d8020; /* Secondary color for elements like dates or buttons */
-    --bg-color: #44ff00;
+    --primary-color: #ffffff; /* Main text color, typically used for titles and body text */
+    --secondary-color: #717171; /* Secondary color for elements like dates or buttons */
+    --bg-color: #000000;
 
     /*ALIGNMENT/SIZING*/
     --max-width: 350px;
@@ -215,6 +215,6 @@ img.poster {
 }
 
 .play-button {
-    width: 50px; /* Adjust size as needed */
+    width: 30px; /* Adjust size as needed */
     height: auto; /* Maintain aspect ratio */
 }
