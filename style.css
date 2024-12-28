@@ -9,7 +9,7 @@
     --max-width: 350px;
     --horizontal-spacing: 10px;
 
-    --poster-gap-h: 10px; /* Space between the poster image and its associated text */
+    --poster-gap-h: 9px; /* Space between the poster image and its associated text */
     --poster-gap-v: 6px;
 
     --corner-button-radius: 5px; /* Rounded corners for posters, buttons, etc. */
