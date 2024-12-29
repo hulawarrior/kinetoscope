@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=no, user-scalable=no">
     <title>Movie Details</title>
     <link rel="stylesheet" href="style.css">
 </head>
@@ -16,7 +16,7 @@
             </a>
         </p>
         <!-- Movie Trailer Section -->
-        <div class="movie-poster-container">
+        <div class="movie-poster-container" style="position: relative;">
             <!-- Video element -->
             <video id="trailer-video" playsinline muted>
                 <source src="" type="video/mp4">
@@ -25,6 +25,10 @@
             <!-- Play Button Overlay -->
             <div id="play-button-overlay" class="play-button-container">
                 <img src="icons/play-button-3.svg" alt="Play Button" class="play-button">
+            </div>
+            <!-- Progress bar -->
+            <div id="video-progress-container" style="display: none;">
+                <div id="video-progress-bar"></div>
             </div>
         </div>
         <div class="header-with-back">
@@ -75,26 +79,59 @@
 
                 const trailerVideo = document.getElementById("trailer-video");
                 const playButtonOverlay = document.getElementById("play-button-overlay");
+                const videoProgressContainer = document.getElementById("video-progress-container");
+                const videoProgressBar = document.getElementById("video-progress-bar");
 
                 if (film.FilmTrailerUrl) {
                     trailerVideo.querySelector("source").src = film.FilmTrailerUrl;
                     trailerVideo.load();
 
-                    // Add play button click handler
+                    // Play button click handler
                     playButtonOverlay.addEventListener("click", () => {
                         playButtonOverlay.style.display = "none"; // Hide the play button
                         trailerVideo.muted = false; // Unmute the video
                         trailerVideo.play(); // Play the video
+                        videoProgressContainer.style.display = "block"; // Show the progress bar
                     });
 
-                    // Add pause/resume handler for video
-                    trailerVideo.addEventListener("click", () => {
-                        if (trailerVideo.paused) {
-                            playButtonOverlay.style.display = "flex"; // Show the play button
-                            trailerVideo.play(); // Play the video
-                        } else {
-                            playButtonOverlay.style.display = "flex"; // Show the play button
-                            trailerVideo.pause(); // Pause the video
+                    // Update slider as the video plays
+                    trailerVideo.addEventListener("timeupdate", () => {
+                        if (!isNaN(trailerVideo.duration)) {
+                            const progress = (trailerVideo.currentTime / trailerVideo.duration) * 100;
+                            videoProgressBar.style.width = `${progress}%`;
+
+                            // Apply rounded leading edge
+                            videoProgressBar.style.borderTopRightRadius = "5px";
+                            videoProgressBar.style.borderBottomRightRadius = "5px";
+
+                            // Remove rounding at full progress
+                            if (progress >= 100) {
+                                videoProgressBar.style.borderTopRightRadius = "0px";
+                                videoProgressBar.style.borderBottomRightRadius = "0px";
+                            }
+                        }
+                    });
+
+                    // Handle scrubbing (click and drag)
+                    videoProgressContainer.addEventListener("mousedown", (e) => {
+                        const containerWidth = videoProgressContainer.offsetWidth;
+                        const offsetX = e.offsetX;
+                        const scrubTime = (offsetX / containerWidth) * trailerVideo.duration;
+                        trailerVideo.currentTime = scrubTime;
+
+                        const progress = (trailerVideo.currentTime / trailerVideo.duration) * 100;
+                        videoProgressBar.style.width = `${progress}%`;
+                    });
+
+                    videoProgressContainer.addEventListener("mousemove", (e) => {
+                        if (e.buttons === 1) { // Only handle dragging with mouse button held
+                            const containerWidth = videoProgressContainer.offsetWidth;
+                            const offsetX = e.offsetX;
+                            const scrubTime = (offsetX / containerWidth) * trailerVideo.duration;
+                            trailerVideo.currentTime = scrubTime;
+
+                            const progress = (trailerVideo.currentTime / trailerVideo.duration) * 100;
+                            videoProgressBar.style.width = `${progress}%`;
                         }
                     });
                 } else {
