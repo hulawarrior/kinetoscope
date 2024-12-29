@@ -18,7 +18,11 @@
         <!-- Movie graphic with play button -->
         <div class="movie-poster-container">
             <!-- Video element (hidden behind poster initially) -->
+<<<<<<< HEAD
             <video id="trailer-video" playsinline muted style="display: none;">
+=======
+            <video id="trailer-video" playsinline style="display: none;">
+>>>>>>> d48ecd7 (Initial commit for k-website)
                 <source src="" type="video/mp4">
                 Your browser does not support the video tag.
             </video>
@@ -108,10 +112,21 @@
                     .map(person => `${person.FirstName} ${person.LastName}`)
                     .join(", ") || "Unknown";
 
+<<<<<<< HEAD
                 // Format opening date with year
                 const openingDate = film.OpeningDate
                     ? `${formatDate(film.OpeningDate)} (${new Date(film.OpeningDate).getFullYear()})`
                     : "Unknown";
+=======
+                // Extract the year from OpeningDate
+                const year = film.OpeningDate ? new Date(film.OpeningDate).getFullYear() : "Unknown";
+
+                // Format runtime
+                const duration = film.Duration || 0;
+                const hours = Math.floor(duration / 60);
+                const minutes = duration % 60;
+                const runtime = duration > 0 ? `${hours} hr ${minutes} min` : "Unknown";
+>>>>>>> d48ecd7 (Initial commit for k-website)
 
                 // Update movie details
                 document.getElementById("movie-title").textContent = film.Title || "Unknown Title";
@@ -119,12 +134,20 @@
                     film.BackdropImageUrl || "https://via.placeholder.com/800x400?text=Backdrop+Not+Available";
                 document.getElementById("movie-synopsis").textContent = film.Synopsis || "No synopsis available.";
                 document.getElementById("movie-details").innerHTML = `
+<<<<<<< HEAD
                     <p>Genre: ${film.Genre || "Unknown"}</p>
                     <p>Runtime: ${film.Duration || "Unknown"} minutes</p>
                     <p>Rating: ${film.Rating || "Not Rated"}</p>
                     <p>Opening Date: ${openingDate}</p>
                     <p>Director: ${director}</p>
                     <p>Starring: ${actors}</p>
+=======
+                    <p>Director: ${director}</p>
+                    <p>Starring: ${actors}</p>
+                    <p>Release Date: ${year}</p>
+                    <p>Rating: ${film.Rating || "Not Rated"}</p>
+                    <p>Runtime: ${runtime}</p>
+>>>>>>> d48ecd7 (Initial commit for k-website)
                 `;
 
                 // Handle play button and trailer logic
@@ -140,6 +163,7 @@
                     playButton.addEventListener("click", async (event) => {
                         event.preventDefault();
 
+<<<<<<< HEAD
                         // Unmute and play the video
                         trailerVideo.style.display = "block";
                         movieBackdrop.style.display = "none"; // Hide the poster
@@ -159,6 +183,21 @@
                         } catch (error) {
                             console.error("Error attempting to play video:", error);
                         }
+=======
+                        // Hide the play button and poster, show the video
+                        playButton.classList.add("hidden");
+                        movieBackdrop.style.display = "none";
+                        trailerVideo.style.display = "block";
+
+                        try {
+                            await trailerVideo.play();
+                        } catch (error) {
+                            console.error("Error attempting to play video:", error);
+                        }
+
+                        // Ensure the play button remains hidden
+                        playButton.style.pointerEvents = "none"; // Disable any clicks
+>>>>>>> d48ecd7 (Initial commit for k-website)
                     });
                 } else {
                     playButton.style.display = "none"; // Hide the play button if no trailer
@@ -170,13 +209,22 @@
         }
 
         // Fetch showtimes for the movie
+<<<<<<< HEAD
         async function fetchMovieShowtimes(filmId) {
             try {
                 const response = await fetch(sessionApiUrl, {
+=======
+        async function fetchMovieDetails(filmId) {
+            try {
+                if (!filmId) throw new Error("No filmId provided in URL");
+
+                const response = await fetch(`${filmApiUrl}/${filmId}`, {
+>>>>>>> d48ecd7 (Initial commit for k-website)
                     headers: { "VeeziAccessToken": apiKey },
                 });
 
                 if (!response.ok) {
+<<<<<<< HEAD
                     throw new Error(`Failed to fetch showtimes: ${response.status} ${response.statusText}`);
                 }
 
@@ -204,6 +252,84 @@
             }
         }
 
+=======
+                    throw new Error(`Failed to fetch movie details: ${response.status} ${response.statusText}`);
+                }
+
+                const film = await response.json();
+
+                // Extract Director and Actors
+                const director = film.People
+                    .filter(person => person.Role === "Director")
+                    .map(person => `${person.FirstName} ${person.LastName}`)
+                    .join(", ") || "Unknown";
+
+                const actors = film.People
+                    .filter(person => person.Role === "Actor")
+                    .map(person => `${person.FirstName} ${person.LastName}`)
+                    .join(", ") || "Unknown";
+
+                // Extract the year from OpeningDate
+                const year = film.OpeningDate ? new Date(film.OpeningDate).getFullYear() : "Unknown";
+
+                // Format runtime
+                const duration = film.Duration || 0;
+                const hours = Math.floor(duration / 60);
+                const minutes = duration % 60;
+                const runtime = duration > 0 ? `${hours} hr ${minutes} min` : "Unknown";
+
+                // Update movie details
+                document.getElementById("movie-title").textContent = film.Title || "Unknown Title";
+                document.getElementById("movie-backdrop").src =
+                    film.BackdropImageUrl || "https://via.placeholder.com/800x400?text=Backdrop+Not+Available";
+                document.getElementById("movie-synopsis").textContent = film.Synopsis || "No synopsis available.";
+                document.getElementById("movie-details").innerHTML = `
+                    <p>Director: ${director}</p>
+                    <p>Starring: ${actors}</p>
+                    <p>Year: ${year}</p>
+                    <p>Rating: ${film.Rating || "Not Rated"}</p>
+                    <p>Runtime: ${runtime}</p>
+                `;
+
+                // Handle play button and trailer logic
+                const playButton = document.querySelector(".play-button-link");
+                const movieBackdrop = document.getElementById("movie-backdrop");
+                const trailerVideo = document.getElementById("trailer-video");
+
+                if (film.FilmTrailerUrl) {
+                    trailerVideo.querySelector("source").src = film.FilmTrailerUrl; // Set the trailer URL
+                    trailerVideo.load(); // Preload the video
+
+                    playButton.style.display = "block"; // Ensure the play button is visible
+                    playButton.addEventListener("click", async (event) => {
+                        event.preventDefault();
+
+                        // Hide the poster and show the trailer
+                        movieBackdrop.style.display = "none";
+                        trailerVideo.style.display = "block";
+
+                        try {
+                            await trailerVideo.play();
+                        } catch (error) {
+                            console.error("Error attempting to play video:", error);
+                        }
+
+                        // Stop the trailer when it ends
+                        trailerVideo.onended = () => {
+                            trailerVideo.style.display = "none";
+                            movieBackdrop.style.display = "block";
+                        };
+                    });
+                } else {
+                    playButton.style.display = "none"; // Hide the play button if no trailer
+                }
+            } catch (error) {
+                console.error("Error loading movie details:", error);
+                document.getElementById("movie-content").innerHTML = `<p>Error loading movie details.</p>`;
+            }
+        }
+        
+>>>>>>> d48ecd7 (Initial commit for k-website)
         // Initialize the page
         document.addEventListener("DOMContentLoaded", () => {
 
