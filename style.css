@@ -3,7 +3,7 @@
     /*COLOR*/
     --primary-color: #ffffff; /* Main text color, typically used for titles and body text */
     --secondary-color: #ffffff; /* Secondary color for elements like dates or buttons */
-    --bg-color: #000000;
+    --bg-color: #19a568;
 
     /*ALIGNMENT/SIZING*/
     --max-width: 350px;
@@ -227,17 +227,4 @@ video {
 .play-button {
     width: 30px; /* Adjust size as needed */
     height: auto; /* Maintain aspect ratio */
-<<<<<<< HEAD
-=======
-}
-
-#movie-details p {
-    margin: 10px 0; /* Add consistent vertical spacing */
-    font-size: 16px; /* Optional: Adjust font size for readability */
-    /* line-height: 1.5; Optional: Improve line spacing */
-}
-
-.hidden {
-    display: none !important;
->>>>>>> d48ecd7 (Initial commit for k-website)
 }
