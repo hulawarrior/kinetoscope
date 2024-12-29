@@ -3,7 +3,7 @@
     /*COLOR*/
     --primary-color: #ffffff; /* Main text color, typically used for titles and body text */
     --secondary-color: #ffffff; /* Secondary color for elements like dates or buttons */
-    --bg-color: #8d3159;
+    --bg-color: #000000;
 
     /*ALIGNMENT/SIZING*/
     --max-width: 350px;
@@ -186,45 +186,36 @@ video {
 .movie-poster-container {
     position: relative;
     width: 100%;
-    height: 0;
-    padding-top: 56.25%; /* 16:9 aspect ratio */
-    overflow: hidden;
-    background-color: black; /* Black background for video */
+    background-color: black;
 }
 
 #trailer-video {
-    position: absolute;
-    top: 0;
-    left: 0;
     width: 100%;
-    height: 100%;
-    z-index: 1; /* Behind the poster and play button initially */
-    display: none; /* Initially hidden */
-    object-fit: cover; /* Ensure the video fills the container */
+    height: auto;
+    display: block;
+    object-fit: contain;
 }
 
 #movie-backdrop {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    object-fit: cover; /* Cover the container while preserving aspect ratio */
-    z-index: 2; /* Above the video but below the play button */
-    display: block;
+    width: 100%; /* Use the full width of the container */
+    height: auto; /* Maintain the image's native aspect ratio */
+    display: none; /* Hide the backdrop by default */
 }
 
-.play-button-link {
+.play-button-container {
     position: absolute;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    z-index: 3; /* Above both the poster and video */
-    text-decoration: none;
-    cursor: pointer; /* Show a pointer on hover */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    z-index: 2;
 }
 
 .play-button {
-    width: 30px; /* Adjust size as needed */
-    height: auto; /* Maintain aspect ratio */
+    width: 30px;
+    height: auto;
+    pointer-events: none; /* Prevent interaction with the image itself */
 }

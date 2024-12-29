@@ -15,21 +15,17 @@
                 Now Playing
             </a>
         </p>
-        <!-- Movie graphic with play button -->
+        <!-- Movie Trailer Section -->
         <div class="movie-poster-container">
-            <!-- Video element (hidden behind poster initially) -->
-            <video id="trailer-video" playsinline style="display: none;">
+            <!-- Video element -->
+            <video id="trailer-video" playsinline muted>
                 <source src="" type="video/mp4">
                 Your browser does not support the video tag.
             </video>
-        
-            <!-- Poster graphic -->
-            <img id="movie-backdrop" src="" alt="Movie Backdrop">
-        
-            <!-- Play button interface -->
-            <a href="#" class="play-button-link">
+            <!-- Play Button Overlay -->
+            <div id="play-button-overlay" class="play-button-container">
                 <img src="icons/play-button-3.svg" alt="Play Button" class="play-button">
-            </a>
+            </div>
         </div>
         <div class="header-with-back">
             <h1 id="movie-title">Loading...</h1>
@@ -48,41 +44,7 @@
     <script>
         const apiKey = "n06hg935gmg68bdv2526wkyjg4"; // Your API Key
         const filmApiUrl = "https://api.uswest.veezi.com/v4/film";
-        const sessionApiUrl = "https://api.uswest.veezi.com/v1/session";
 
-        // Utility function to format a date string into "Thu Dec. 26" format
-        function formatDate(dateString) {
-            const date = new Date(dateString);
-            const weekday = date.toLocaleDateString(undefined, { weekday: "short" });
-            const month = date.toLocaleDateString(undefined, { month: "short" });
-            const day = date.toLocaleDateString(undefined, { day: "numeric" });
-            return `${weekday} ${month}. ${day}`;
-        }
-
-        // Utility function to format a time string into a 12-hour clock with lowercase am/pm
-        function formatTime(dateString) {
-            const date = new Date(dateString);
-            return date
-                .toLocaleTimeString([], { hour: "numeric", minute: "2-digit", hour12: true })
-                .toLowerCase();
-        }
-
-        // // Function to update the sticky banner with the next showtime
-        // function updateStickyBanner(dateString, sessionId) {
-        //     const formattedDate = formatDate(dateString);
-        //     const formattedTime = formatTime(dateString);
-        //     const banner = document.getElementById("sticky-banner");
-
-        //     // Create the sticky banner content
-        //     banner.innerHTML = `
-        //         <span>${formattedDate}</span>
-        //         <a href="purchase.html?sessionId=${sessionId}" class="time-link">
-        //             ${formattedTime}
-        //         </a>
-        //     `;
-        // }
-
-        // Fetch movie details
         async function fetchMovieDetails(filmId) {
             try {
                 if (!filmId) throw new Error("No filmId provided in URL");
@@ -97,68 +59,47 @@
 
                 const film = await response.json();
 
-                // Extract Director and Actors
-                const director = film.People
-                    .filter(person => person.Role === "Director")
-                    .map(person => `${person.FirstName} ${person.LastName}`)
-                    .join(", ") || "Unknown";
-
-                const actors = film.People
-                    .filter(person => person.Role === "Actor")
-                    .map(person => `${person.FirstName} ${person.LastName}`)
-                    .join(", ") || "Unknown";
-
-                // Extract the year from OpeningDate
-                const year = film.OpeningDate ? new Date(film.OpeningDate).getFullYear() : "Unknown";
-
-                // Format runtime
-                const duration = film.Duration || 0;
-                const hours = Math.floor(duration / 60);
-                const minutes = duration % 60;
-                const runtime = duration > 0 ? `${hours} hr ${minutes} min` : "Unknown";
-
                 // Update movie details
                 document.getElementById("movie-title").textContent = film.Title || "Unknown Title";
-                document.getElementById("movie-backdrop").src =
-                    film.BackdropImageUrl || "https://via.placeholder.com/800x400?text=Backdrop+Not+Available";
                 document.getElementById("movie-synopsis").textContent = film.Synopsis || "No synopsis available.";
                 document.getElementById("movie-details").innerHTML = `
-                    <p>Director: ${director}</p>
-                    <p>Starring: ${actors}</p>
-                    <p>Release Date: ${year}</p>
+                    <p>Genre: ${film.Genre || "Unknown"}</p>
+                    <p>Runtime: ${film.Duration || "Unknown"} minutes</p>
                     <p>Rating: ${film.Rating || "Not Rated"}</p>
-                    <p>Runtime: ${runtime}</p>
+                    <p>Director: ${
+                        film.People.filter(person => person.Role === "Director")
+                            .map(person => `${person.FirstName} ${person.LastName}`)
+                            .join(", ") || "Unknown"
+                    }</p>
                 `;
 
-                // Handle play button and trailer logic
-                const playButton = document.querySelector(".play-button-link");
-                const movieBackdrop = document.getElementById("movie-backdrop");
                 const trailerVideo = document.getElementById("trailer-video");
+                const playButtonOverlay = document.getElementById("play-button-overlay");
 
                 if (film.FilmTrailerUrl) {
-                    trailerVideo.querySelector("source").src = film.FilmTrailerUrl; // Set the trailer URL
-                    trailerVideo.load(); // Preload the video
+                    trailerVideo.querySelector("source").src = film.FilmTrailerUrl;
+                    trailerVideo.load();
 
-                    playButton.style.display = "block"; // Ensure the play button is visible
-                    playButton.addEventListener("click", async (event) => {
-                        event.preventDefault();
+                    // Add play button click handler
+                    playButtonOverlay.addEventListener("click", () => {
+                        playButtonOverlay.style.display = "none"; // Hide the play button
+                        trailerVideo.muted = false; // Unmute the video
+                        trailerVideo.play(); // Play the video
+                    });
 
-                        // Hide the play button and poster, show the video
-                        playButton.classList.add("hidden");
-                        movieBackdrop.style.display = "none";
-                        trailerVideo.style.display = "block";
-
-                        try {
-                            await trailerVideo.play();
-                        } catch (error) {
-                            console.error("Error attempting to play video:", error);
+                    // Add pause/resume handler for video
+                    trailerVideo.addEventListener("click", () => {
+                        if (trailerVideo.paused) {
+                            playButtonOverlay.style.display = "flex"; // Show the play button
+                            trailerVideo.play(); // Play the video
+                        } else {
+                            playButtonOverlay.style.display = "flex"; // Show the play button
+                            trailerVideo.pause(); // Pause the video
                         }
-
-                        // Ensure the play button remains hidden
-                        playButton.style.pointerEvents = "none"; // Disable any clicks
                     });
                 } else {
-                    playButton.style.display = "none"; // Hide the play button if no trailer
+                    document.querySelector(".movie-poster-container").innerHTML =
+                        `<p>Trailer not available.</p>`;
                 }
             } catch (error) {
                 console.error("Error loading movie details:", error);
@@ -166,102 +107,9 @@
             }
         }
 
-        // Fetch showtimes for the movie
-        async function fetchMovieDetails(filmId) {
-            try {
-                if (!filmId) throw new Error("No filmId provided in URL");
-
-                const response = await fetch(`${filmApiUrl}/${filmId}`, {
-                    headers: { "VeeziAccessToken": apiKey },
-                });
-
-                if (!response.ok) {
-                    throw new Error(`Failed to fetch movie details: ${response.status} ${response.statusText}`);
-                }
-
-                const film = await response.json();
-
-                // Extract Director and Actors
-                const director = film.People
-                    .filter(person => person.Role === "Director")
-                    .map(person => `${person.FirstName} ${person.LastName}`)
-                    .join(", ") || "Unknown";
-
-                const actors = film.People
-                    .filter(person => person.Role === "Actor")
-                    .map(person => `${person.FirstName} ${person.LastName}`)
-                    .join(", ") || "Unknown";
-
-                // Extract the year from OpeningDate
-                const year = film.OpeningDate ? new Date(film.OpeningDate).getFullYear() : "Unknown";
-
-                // Format runtime
-                const duration = film.Duration || 0;
-                const hours = Math.floor(duration / 60);
-                const minutes = duration % 60;
-                const runtime = duration > 0 ? `${hours} hr ${minutes} min` : "Unknown";
-
-                // Update movie details
-                document.getElementById("movie-title").textContent = film.Title || "Unknown Title";
-                document.getElementById("movie-backdrop").src =
-                    film.BackdropImageUrl || "https://via.placeholder.com/800x400?text=Backdrop+Not+Available";
-                document.getElementById("movie-synopsis").textContent = film.Synopsis || "No synopsis available.";
-                document.getElementById("movie-details").innerHTML = `
-                    <p>Director: ${director}</p>
-                    <p>Starring: ${actors}</p>
-                    <p>Year: ${year}</p>
-                    <p>Rating: ${film.Rating || "Not Rated"}</p>
-                    <p>Runtime: ${runtime}</p>
-                `;
-
-                // Handle play button and trailer logic
-                const playButton = document.querySelector(".play-button-link");
-                const movieBackdrop = document.getElementById("movie-backdrop");
-                const trailerVideo = document.getElementById("trailer-video");
-
-                if (film.FilmTrailerUrl) {
-                    trailerVideo.querySelector("source").src = film.FilmTrailerUrl; // Set the trailer URL
-                    trailerVideo.load(); // Preload the video
-
-                    playButton.style.display = "block"; // Ensure the play button is visible
-                    playButton.addEventListener("click", async (event) => {
-                        event.preventDefault();
-
-                        // Hide the poster and show the trailer
-                        movieBackdrop.style.display = "none";
-                        trailerVideo.style.display = "block";
-
-                        try {
-                            await trailerVideo.play();
-                        } catch (error) {
-                            console.error("Error attempting to play video:", error);
-                        }
-
-                        // Stop the trailer when it ends
-                        trailerVideo.onended = () => {
-                            trailerVideo.style.display = "none";
-                            movieBackdrop.style.display = "block";
-                        };
-                    });
-                } else {
-                    playButton.style.display = "none"; // Hide the play button if no trailer
-                }
-            } catch (error) {
-                console.error("Error loading movie details:", error);
-                document.getElementById("movie-content").innerHTML = `<p>Error loading movie details.</p>`;
-            }
-        }
-        
-        // Initialize the page
         document.addEventListener("DOMContentLoaded", () => {
-
             const filmId = new URLSearchParams(window.location.search).get("filmId");
-            if (filmId) {
-                fetchMovieDetails(filmId);
-                fetchMovieShowtimes(filmId);
-            } else {
-                document.getElementById("movie-content").innerHTML = `<p>No movie selected.</p>`;
-            }
+            if (filmId) fetchMovieDetails(filmId);
         });
     </script>
 </body>
