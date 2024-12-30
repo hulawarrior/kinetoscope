@@ -15,6 +15,7 @@
                 Now Playing
             </a>
         </p>
+
         <!-- Movie Trailer Section -->
         <div class="movie-poster-container" style="position: relative;">
             <!-- Video element -->
@@ -26,11 +27,13 @@
             <div id="play-button-overlay" class="play-button-container">
                 <img src="icons/play-button-3.svg" alt="Play Button" class="play-button">
             </div>
-            <!-- Progress bar -->
+            <!-- Progress Bar -->
             <div id="video-progress-container" style="display: none;">
                 <div id="video-progress-bar"></div>
             </div>
         </div>
+
+        <!-- Movie Details Section -->
         <div class="header-with-back">
             <h1 id="movie-title">Loading...</h1>
         </div>
@@ -41,12 +44,14 @@
         <p id="movie-synopsis">Loading synopsis...</p>
         <div id="movie-details"></div>
     </div>
+
+    <!-- Sticky Banner -->
     <div id="sticky-banner">
         <!-- Sticky banner content will be dynamically updated -->
     </div>
 
     <script>
-        const apiKey = "n06hg935gmg68bdv2526wkyjg4"; // Your API Key
+        const apiKey = "n06hg935gmg68bdv2526wkyjg4"; // Your API key
         const filmApiUrl = "https://api.uswest.veezi.com/v4/film";
 
         async function fetchMovieDetails(filmId) {
@@ -64,138 +69,168 @@
                 const film = await response.json();
 
                 // Update movie details
-                document.getElementById("movie-title").textContent = film.Title || "Unknown Title";
-                document.getElementById("movie-synopsis").textContent = film.Synopsis || "No synopsis available.";
-                document.getElementById("movie-details").innerHTML = `
-                    <p>Genre: ${film.Genre || "Unknown"}</p>
-                    <p>Runtime: ${film.Duration || "Unknown"} minutes</p>
-                    <p>Rating: ${film.Rating || "Not Rated"}</p>
-                    <p>Director: ${
-                        film.People.filter(person => person.Role === "Director")
-                            .map(person => `${person.FirstName} ${person.LastName}`)
-                            .join(", ") || "Unknown"
-                    }</p>
-                `;
+                updateMovieDetails(film);
 
-                const trailerVideo = document.getElementById("trailer-video");
-                const playButtonOverlay = document.getElementById("play-button-overlay");
-                const videoProgressContainer = document.getElementById("video-progress-container");
-                const videoProgressBar = document.getElementById("video-progress-bar");
+                // Set up video and progress bar
+                setupVideoPlayer(film.FilmTrailerUrl);
 
-                if (film.FilmTrailerUrl) {
-                    trailerVideo.querySelector("source").src = film.FilmTrailerUrl;
-                    trailerVideo.load();
-
-                    // Add scrubbing listeners
-                    const addScrubbingListeners = () => {
-                        const handleScrub = (clientX) => {
-                            const rect = videoProgressContainer.getBoundingClientRect();
-                            const offsetX = clientX - rect.left; // Calculate position relative to container
-                            const width = rect.width; // Get container width
-                            const scrubTime = (offsetX / width) * trailerVideo.duration; // Map to video duration
-
-                            // Clamp scrubTime to valid range
-                            trailerVideo.currentTime = Math.max(0, Math.min(scrubTime, trailerVideo.duration));
-
-                            // Update progress bar
-                            const progress = (trailerVideo.currentTime / trailerVideo.duration) * 100;
-                            videoProgressBar.style.width = `${progress}%`;
-
-                            // Auto-play if the video is paused
-                            if (trailerVideo.paused) {
-                                trailerVideo.play();
-                                playButtonOverlay.style.display = "none"; // Hide the play button
-                            }
-                        };
-
-                        // Desktop scrubbing
-                        videoProgressContainer.addEventListener("mousedown", (e) => {
-                            handleScrub(e.clientX); // Handle initial click
-
-                            const onMouseMove = (event) => handleScrub(event.clientX); // Handle dragging
-                            const onMouseUp = () => {
-                                document.removeEventListener("mousemove", onMouseMove);
-                                document.removeEventListener("mouseup", onMouseUp);
-                            };
-
-                            document.addEventListener("mousemove", onMouseMove);
-                            document.addEventListener("mouseup", onMouseUp);
-                        });
-
-                        // Mobile scrubbing
-                        videoProgressContainer.addEventListener("touchstart", (e) => {
-                            const touch = e.touches[0];
-                            handleScrub(touch.clientX);
-
-                            const onTouchMove = (event) => {
-                                const moveTouch = event.touches[0];
-                                handleScrub(moveTouch.clientX);
-                            };
-
-                            const onTouchEnd = () => {
-                                document.removeEventListener("touchmove", onTouchMove);
-                                document.removeEventListener("touchend", onTouchEnd);
-                            };
-
-                            document.addEventListener("touchmove", onTouchMove);
-                            document.addEventListener("touchend", onTouchEnd);
-                        });
-                    };
-
-                    addScrubbingListeners();
-
-                    // Play button click handler
-                    playButtonOverlay.addEventListener("click", () => {
-                        playButtonOverlay.style.display = "none";
-                        trailerVideo.muted = false;
-                        trailerVideo.play();
-                        videoProgressContainer.style.display = "block";
-                    });
-
-                    // Toggle play/pause when clicking the video
-                    trailerVideo.addEventListener("click", () => {
-                        if (trailerVideo.paused) {
-                            playButtonOverlay.style.display = "none";
-                            trailerVideo.play();
-                        } else {
-                            playButtonOverlay.style.display = "flex";
-                            trailerVideo.pause();
-                        }
-                    });
-
-                    // Show play button when the video is paused
-                    trailerVideo.addEventListener("pause", () => {
-                        playButtonOverlay.style.display = "flex";
-                    });
-
-                    // Hide play button when the video plays
-                    trailerVideo.addEventListener("play", () => {
-                        playButtonOverlay.style.display = "none";
-                    });
-
-                    // Update slider as the video plays
-                    trailerVideo.addEventListener("timeupdate", () => {
-                        if (!isNaN(trailerVideo.duration)) {
-                            const progress = (trailerVideo.currentTime / trailerVideo.duration) * 100;
-                            videoProgressBar.style.width = `${progress}%`;
-
-                            videoProgressBar.style.borderTopRightRadius = "5px";
-                            videoProgressBar.style.borderBottomRightRadius = "5px";
-
-                            if (progress >= 100) {
-                                videoProgressBar.style.borderTopRightRadius = "0px";
-                                videoProgressBar.style.borderBottomRightRadius = "0px";
-                            }
-                        }
-                    });
-                } else {
-                    document.querySelector(".movie-poster-container").innerHTML =
-                        `<p>Trailer not available.</p>`;
-                }
             } catch (error) {
-                console.error("Error loading movie details:", error);
+                console.error("Error fetching movie details:", error);
                 document.getElementById("movie-content").innerHTML = `<p>Error loading movie details.</p>`;
             }
+        }
+
+        function updateMovieDetails(film) {
+            document.getElementById("movie-title").textContent = film.Title || "Unknown Title";
+            document.getElementById("movie-synopsis").textContent = film.Synopsis || "No synopsis available.";
+            document.getElementById("movie-details").innerHTML = `
+                <p>Director: ${
+                    film.People.filter(person => person.Role === "Director")
+                        .map(person => `${person.FirstName} ${person.LastName}`)
+                        .join(", ") || "Unknown"
+                }</p>
+                <p>Runtime: ${film.Duration || "Unknown"} minutes</p>
+                <p>Rating: ${film.Rating || "Not Rated"}</p>
+            `;
+        }
+
+        function setupVideoPlayer(trailerUrl) {
+            const trailerVideo = document.getElementById("trailer-video");
+            const playButtonOverlay = document.getElementById("play-button-overlay");
+            const videoProgressContainer = document.getElementById("video-progress-container");
+            const videoProgressBar = document.getElementById("video-progress-bar");
+
+            if (trailerUrl) {
+                trailerVideo.querySelector("source").src = trailerUrl;
+                trailerVideo.load();
+
+                // Initialize scrubbing
+                setupScrubbing(trailerVideo, videoProgressContainer, videoProgressBar);
+
+                // Initialize auto-hide for progress bar
+                setupAutoHideProgressBar(trailerVideo, videoProgressContainer);
+
+                // Play button click handler
+                playButtonOverlay.addEventListener("click", () => {
+                    playButtonOverlay.style.display = "none";
+                    trailerVideo.muted = false;
+                    trailerVideo.play();
+                    videoProgressContainer.style.display = "block";
+                });
+
+                // Toggle play/pause when clicking the video
+                trailerVideo.addEventListener("click", () => {
+                    if (trailerVideo.paused) {
+                        playButtonOverlay.style.display = "none";
+                        trailerVideo.play();
+                    } else {
+                        playButtonOverlay.style.display = "flex";
+                        trailerVideo.pause();
+                    }
+                });
+
+                trailerVideo.addEventListener("pause", () => {
+                    playButtonOverlay.style.display = "flex";
+                });
+
+                trailerVideo.addEventListener("play", () => {
+                    playButtonOverlay.style.display = "none";
+                });
+
+                trailerVideo.addEventListener("timeupdate", () => {
+                    if (!isNaN(trailerVideo.duration)) {
+                        const progress = (trailerVideo.currentTime / trailerVideo.duration) * 100;
+                        videoProgressBar.style.width = `${progress}%`;
+
+                        if (progress >= 100) {
+                            videoProgressBar.style.borderTopRightRadius = "0px";
+                            videoProgressBar.style.borderBottomRightRadius = "0px";
+                        } else {
+                            videoProgressBar.style.borderTopRightRadius = "5px";
+                            videoProgressBar.style.borderBottomRightRadius = "5px";
+                        }
+                    }
+                });
+            } else {
+                console.log("Trailer URL not available");
+                document.querySelector(".movie-poster-container").innerHTML = `<p>Trailer not available.</p>`;
+            }
+        }
+
+        function setupScrubbing(trailerVideo, videoProgressContainer, videoProgressBar) {
+            const handleScrub = (clientX) => {
+                const rect = videoProgressContainer.getBoundingClientRect();
+                const offsetX = clientX - rect.left;
+                const width = rect.width;
+                const scrubTime = (offsetX / width) * trailerVideo.duration;
+
+                trailerVideo.currentTime = Math.max(0, Math.min(scrubTime, trailerVideo.duration));
+                const progress = (trailerVideo.currentTime / trailerVideo.duration) * 100;
+                videoProgressBar.style.width = `${progress}%`;
+            };
+
+            videoProgressContainer.addEventListener("mousedown", (e) => {
+                handleScrub(e.clientX);
+                const onMouseMove = (event) => handleScrub(event.clientX);
+                const onMouseUp = () => {
+                    document.removeEventListener("mousemove", onMouseMove);
+                    document.removeEventListener("mouseup", onMouseUp);
+                };
+
+                document.addEventListener("mousemove", onMouseMove);
+                document.addEventListener("mouseup", onMouseUp);
+            });
+
+            videoProgressContainer.addEventListener("touchstart", (e) => {
+                const touch = e.touches[0];
+                handleScrub(touch.clientX);
+                const onTouchMove = (event) => handleScrub(event.touches[0].clientX);
+                const onTouchEnd = () => {
+                    document.removeEventListener("touchmove", onTouchMove);
+                    document.removeEventListener("touchend", onTouchEnd);
+                };
+
+                document.addEventListener("touchmove", onTouchMove);
+                document.addEventListener("touchend", onTouchEnd);
+            });
+        }
+
+        function setupAutoHideProgressBar(trailerVideo, videoProgressContainer) {
+            // Function to hide the progress bar
+            const hideProgressBar = () => {
+                videoProgressContainer.style.opacity = "0"; // Fade out
+                videoProgressContainer.style.pointerEvents = "none"; // Disable interaction
+                setTimeout(() => {
+                    videoProgressContainer.style.visibility = "hidden"; // Fully hide after fade-out
+                    console.log("Progress bar fully hidden.");
+                }, 500); // Match the fade-out duration
+            };
+
+            // Function to show the progress bar immediately
+            const showProgressBarInstantly = () => {
+                videoProgressContainer.style.transition = "none"; // Disable transition
+                videoProgressContainer.style.visibility = "visible"; // Make it visible
+                videoProgressContainer.style.opacity = "1"; // Set full opacity
+                videoProgressContainer.style.pointerEvents = "auto"; // Enable interaction
+                console.log("Progress bar shown instantly.");
+                
+                // Restore the fade-in/out transition for future hides
+                setTimeout(() => {
+                    videoProgressContainer.style.transition = "opacity 0.5s ease";
+                }, 50); // Restore transition after applying the changes
+            };
+
+            // Add event listener for video play
+            trailerVideo.addEventListener("play", () => {
+                console.log("Video started playing. Hiding progress bar in 2 seconds...");
+                setTimeout(hideProgressBar, 000); // Hide after 2 seconds of playback
+            });
+
+            // Add event listener for video pause
+            trailerVideo.addEventListener("pause", () => {
+                console.log("Video paused. Showing progress bar instantly.");
+                showProgressBarInstantly(); // Show the progress bar instantly
+            });
         }
 
         document.addEventListener("DOMContentLoaded", () => {

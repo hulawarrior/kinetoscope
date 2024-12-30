@@ -3,7 +3,7 @@
     /*COLOR*/
     --primary-color: #ffffff; /* Main text color, typically used for titles and body text */
     --secondary-color: #ffffff; /* Secondary color for elements like dates or buttons */
-    --bg-color: #120631;
+    --bg-color: #000000;
 
     /*ALIGNMENT/SIZING*/
     --max-width: 350px;
@@ -229,6 +229,9 @@ video {
     height: 3px; /* The thickness of the progress bar */
     background-color: transparent; /* Transparent background for the container */
     overflow: hidden; /* Ensures the inner bar stays within bounds */
+    transition: opacity .2s ease; /* Smooth fade-in and fade-out */
+    opacity: 1; /* Initially visible */
+    pointer-events: auto; /* Allow interaction by default */
 }
 
 /* Progress bar (the moving part) */
