@@ -86,12 +86,85 @@
                     trailerVideo.querySelector("source").src = film.FilmTrailerUrl;
                     trailerVideo.load();
 
+                    // Add scrubbing listeners
+                    const addScrubbingListeners = () => {
+                        const handleScrub = (clientX) => {
+                            const rect = videoProgressContainer.getBoundingClientRect();
+                            const offsetX = clientX - rect.left; // Calculate position relative to container
+                            const width = rect.width; // Get container width
+                            const scrubTime = (offsetX / width) * trailerVideo.duration; // Map to video duration
+
+                            // Clamp scrubTime to valid range
+                            trailerVideo.currentTime = Math.max(0, Math.min(scrubTime, trailerVideo.duration));
+
+                            // Update progress bar
+                            const progress = (trailerVideo.currentTime / trailerVideo.duration) * 100;
+                            videoProgressBar.style.width = `${progress}%`;
+                        };
+
+                        // Desktop scrubbing
+                        videoProgressContainer.addEventListener("mousedown", (e) => {
+                            handleScrub(e.clientX); // Handle initial click
+
+                            const onMouseMove = (event) => handleScrub(event.clientX); // Handle dragging
+                            const onMouseUp = () => {
+                                document.removeEventListener("mousemove", onMouseMove);
+                                document.removeEventListener("mouseup", onMouseUp);
+                            };
+
+                            document.addEventListener("mousemove", onMouseMove);
+                            document.addEventListener("mouseup", onMouseUp);
+                        });
+
+                        // Mobile scrubbing
+                        videoProgressContainer.addEventListener("touchstart", (e) => {
+                            const touch = e.touches[0];
+                            handleScrub(touch.clientX);
+
+                            const onTouchMove = (event) => {
+                                const moveTouch = event.touches[0];
+                                handleScrub(moveTouch.clientX);
+                            };
+
+                            const onTouchEnd = () => {
+                                document.removeEventListener("touchmove", onTouchMove);
+                                document.removeEventListener("touchend", onTouchEnd);
+                            };
+
+                            document.addEventListener("touchmove", onTouchMove);
+                            document.addEventListener("touchend", onTouchEnd);
+                        });
+                    };
+
+                    addScrubbingListeners();
+
                     // Play button click handler
                     playButtonOverlay.addEventListener("click", () => {
-                        playButtonOverlay.style.display = "none"; // Hide the play button
-                        trailerVideo.muted = false; // Unmute the video
-                        trailerVideo.play(); // Play the video
-                        videoProgressContainer.style.display = "block"; // Show the progress bar
+                        playButtonOverlay.style.display = "none";
+                        trailerVideo.muted = false;
+                        trailerVideo.play();
+                        videoProgressContainer.style.display = "block";
+                    });
+
+                    // Toggle play/pause when clicking the video
+                    trailerVideo.addEventListener("click", () => {
+                        if (trailerVideo.paused) {
+                            playButtonOverlay.style.display = "none";
+                            trailerVideo.play();
+                        } else {
+                            playButtonOverlay.style.display = "flex";
+                            trailerVideo.pause();
+                        }
+                    });
+
+                    // Show play button when the video is paused
+                    trailerVideo.addEventListener("pause", () => {
+                        playButtonOverlay.style.display = "flex";
+                    });
+
+                    // Hide play button when the video plays
+                    trailerVideo.addEventListener("play", () => {
+                        playButtonOverlay.style.display = "none";
                     });
 
                     // Update slider as the video plays
@@ -100,38 +173,13 @@
                             const progress = (trailerVideo.currentTime / trailerVideo.duration) * 100;
                             videoProgressBar.style.width = `${progress}%`;
 
-                            // Apply rounded leading edge
                             videoProgressBar.style.borderTopRightRadius = "5px";
                             videoProgressBar.style.borderBottomRightRadius = "5px";
 
-                            // Remove rounding at full progress
                             if (progress >= 100) {
                                 videoProgressBar.style.borderTopRightRadius = "0px";
                                 videoProgressBar.style.borderBottomRightRadius = "0px";
                             }
-                        }
-                    });
-
-                    // Handle scrubbing (click and drag)
-                    videoProgressContainer.addEventListener("mousedown", (e) => {
-                        const containerWidth = videoProgressContainer.offsetWidth;
-                        const offsetX = e.offsetX;
-                        const scrubTime = (offsetX / containerWidth) * trailerVideo.duration;
-                        trailerVideo.currentTime = scrubTime;
-
-                        const progress = (trailerVideo.currentTime / trailerVideo.duration) * 100;
-                        videoProgressBar.style.width = `${progress}%`;
-                    });
-
-                    videoProgressContainer.addEventListener("mousemove", (e) => {
-                        if (e.buttons === 1) { // Only handle dragging with mouse button held
-                            const containerWidth = videoProgressContainer.offsetWidth;
-                            const offsetX = e.offsetX;
-                            const scrubTime = (offsetX / containerWidth) * trailerVideo.duration;
-                            trailerVideo.currentTime = scrubTime;
-
-                            const progress = (trailerVideo.currentTime / trailerVideo.duration) * 100;
-                            videoProgressBar.style.width = `${progress}%`;
                         }
                     });
                 } else {
