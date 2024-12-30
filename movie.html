@@ -100,6 +100,12 @@
                             // Update progress bar
                             const progress = (trailerVideo.currentTime / trailerVideo.duration) * 100;
                             videoProgressBar.style.width = `${progress}%`;
+
+                            // Auto-play if the video is paused
+                            if (trailerVideo.paused) {
+                                trailerVideo.play();
+                                playButtonOverlay.style.display = "none"; // Hide the play button
+                            }
                         };
 
                         // Desktop scrubbing
