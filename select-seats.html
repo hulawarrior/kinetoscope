@@ -8,31 +8,37 @@
 </head>
 <body>
     <div class="container">
-        <!-- Back Icon -->
-        <p class="now-playing-title">
+        <div id="header-container" class="header">
+            <!-- Back Arrow -->
             <a href="#" id="back-link" class="now-playing-link">
                 <img src="icons/back-arrow-3.svg" alt="Back Arrow" class="back-arrow-img">
-                Back
             </a>
-        </p>
-        <script>
-            const params = new URLSearchParams(window.location.search);
-            const filmId = params.get("filmId");
-            const defaultRedirect = "index.html";
-            const redirectUrl = filmId ? `movie.html?filmId=${filmId}` : defaultRedirect;
-
-            document.getElementById("back-link").setAttribute("href", redirectUrl);
-        </script>
-        <div class="countdown-timer">
-            Time remaining: <span id="timer">10:00</span>
+        
+            <!-- Movie Details -->
+            <div id="movie-details-container" class="movie-details">
+                <!-- Movie Poster -->
+                <div id="movie-poster-container">
+                    <img id="movie-poster" src="placeholder-poster.jpg" alt="Movie Poster">
+                </div>
+        
+                <!-- Title and Date -->
+                <div id="movie-info">
+                    <p id="movie-title">Loading...</p>
+                    <p id="show-date-time">Loading...</p>
+                </div>
+            </div>
         </div>
-        <p><strong>Movie:</strong> <span id="movie-title">Loading...</span></p>
-        <p><strong>Date:</strong> <span id="show-date">Loading...</span></p>
-        <p><strong>Time:</strong> <span id="show-time">Loading...</span></p>
-
+    
+        <!-- Countdown Timer -->
+        <div class="countdown-timer-container">
+            <div class="countdown-timer">
+                <span id="timer">10:00</span>
+            </div>
+        </div>
+    
         <!-- Continue Button -->
         <button id="continue-button" class="continue-button" disabled>Continue</button>
-
+    
         <!-- Seating Chart Container -->
         <div id="seating-chart-container" class="seating-chart-container">
             <!-- Screen Label -->
@@ -59,12 +65,21 @@
                 if (!response.ok) throw new Error(`Failed to fetch showtime details: ${response.status}`);
 
                 const showtime = await response.json();
-                document.getElementById("show-date").textContent = new Date(showtime.PreShowStartTime).toLocaleDateString();
-                document.getElementById("show-time").textContent = new Date(showtime.PreShowStartTime).toLocaleTimeString([], {
+                const showDateTime = new Date(showtime.PreShowStartTime);
+
+                // Format the date and time into the desired format
+                const formattedDateTime = showDateTime.toLocaleDateString(undefined, {
+                    weekday: 'short', // Abbreviated weekday (e.g., Mon)
+                    month: 'short', // Abbreviated month (e.g., Dec)
+                    day: 'numeric', // Day of the month (e.g., 11)
+                }) + ` at ` + showDateTime.toLocaleTimeString([], {
                     hour: 'numeric',
                     minute: '2-digit',
-                    hour12: true,
-                });
+                    hour12: true, // Use 12-hour format
+                }).toLowerCase(); // Lowercase am/pm
+
+                // Set the combined date and time in a single element
+                document.getElementById("show-date-time").textContent = formattedDateTime;
 
                 // Fetch movie details
                 fetchMovieDetails(showtime.FilmId);
@@ -195,9 +210,24 @@
                 if (!response.ok) throw new Error(`Failed to fetch movie details: ${response.status}`);
 
                 const film = await response.json();
+
+                // Set the movie title
                 document.getElementById("movie-title").textContent = film.Title || "Unknown Movie";
+
+                // Set the movie poster
+                const posterElement = document.getElementById("movie-poster");
+                const posterUrl = film.FilmPosterUrl || film.FilmPosterThumbnailUrl || "placeholder-poster.jpg";
+
+                posterElement.src = posterUrl;
+                posterElement.alt = `${film.Title || "Movie"} Poster`;
+
             } catch (error) {
                 console.error("Error fetching movie details:", error);
+
+                // Set a default poster if there's an error
+                const posterElement = document.getElementById("movie-poster");
+                posterElement.src = "placeholder-poster.jpg";
+                posterElement.alt = "Default Poster";
             }
         }
 
@@ -217,8 +247,10 @@
                 const minutes = Math.floor(timeLeft / 60);
                 const seconds = timeLeft % 60;
 
-                // Format as MM:SS
-                document.getElementById("timer").textContent = `${minutes}:${seconds.toString().padStart(2, "0")}`;
+                // Format the text as "9:32"
+                document.getElementById("timer").textContent = `${minutes}:${seconds
+                    .toString()
+                    .padStart(2, "0")}`;
 
                 if (timeLeft > 0) {
                     timeLeft--;

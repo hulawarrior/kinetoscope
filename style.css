@@ -294,7 +294,73 @@ video {
     height: 3px; /* Match the progress bar height */
 }
 
-/* Seating Chart */
+/*SELECT SEATING*/
+
+/* Flex container for the header */
+.header {
+    display: flex; /* Align items in a row */
+    align-items: center; /* Center items vertically */
+    gap: 20px; /* Space between the back arrow and movie details */
+    margin-bottom: 20px; /* Optional spacing below the header */
+}
+
+/* Back arrow styles */
+.now-playing-link {
+    display: flex; /* Ensure proper alignment */
+    align-items: center; /* Vertically center the arrow */
+    justify-content: center;
+}
+
+.back-arrow-img {
+    width: var(--back-arrow-width); /* Adjust arrow size */
+    height: auto; /* Maintain aspect ratio */
+}
+
+/* Movie details container */
+
+.movie-details {
+    display: flex; /* Arrange poster and info in a row */
+    align-items: center; /* Center items vertically */
+    gap: 20px; /* Space between poster and text */
+    margin-bottom: 0;
+}
+
+/* Poster container */
+#movie-poster-container {
+    flex-shrink: 0; /* Prevent shrinking of the poster */
+    width: 40px; /* Set the poster width */
+}
+
+#movie-poster {
+    width: 100%; /* Make the poster fill the container */
+    height: auto; /* Maintain aspect ratio */
+    border-radius: 5px; /* Optional rounded corners */
+}
+
+/* Movie info (title and date) */
+#movie-info {
+    display: flex;
+    flex-direction: column; /* Stack title and date vertically */
+    gap: 5px; /* Space between title and date */
+}
+
+/* Countdown Timer Container */
+.countdown-timer-container {
+    width: 100%; /* Full width of the screen */
+    background-color: #004c9e; /* Dark background color for the rectangle */
+    color: #fff; /* White text for contrast */
+    padding: 7px 0; /* Vertical padding inside the rectangle */
+    box-sizing: border-box; /* Include padding in width calculations */
+    text-align: center; /* Center the text horizontally */
+}
+
+/* Countdown Timer Text */
+.countdown-timer {
+    display: flex; /* Flexbox for vertical centering */
+    justify-content: center; /* Center content horizontally */
+    align-items: center; /* Center content vertically */
+}
+
 .seating-chart-container {
     width: 100%;
     height: auto; /* Make the container fit 80% of the viewport height */
@@ -349,7 +415,6 @@ video {
     height: 20px; /* Set a fixed height for the screen */
     background-color: white; /* Keep the background color */
     color: var(--bg-color, black); /* Adjust text color as needed */
-    font-weight: bold; /* Make the text bold */
     font-size: 14px; /* Adjust font size */
     text-align: center; /* Center the text horizontally */
     line-height: 20px; /* Vertically align text inside the screen */
