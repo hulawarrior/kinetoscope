@@ -177,13 +177,13 @@
 
                 return `
                     <p>${date}</p>
-                    <a href="purchase.html?sessionId=${showtime.Id}&filmId=${showtime.FilmId}" class="time-link">${time}</a>
+                    <a href="select-seats.html?sessionId=${showtime.Id}&filmId=${showtime.FilmId}" class="time-link">${time}</a>
                 `;
             }).join("");
 
             showtimesContainer.innerHTML = showtimesHtml;
         }
-        
+
         function updateMovieDetails(film) {
             // Extract director(s)
             const directors = film.People

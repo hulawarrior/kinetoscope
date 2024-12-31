@@ -296,20 +296,28 @@ video {
 
 /* Seating Chart */
 .seating-chart-container {
-    display: flex;
-    justify-content: center; /* Center the chart horizontally */
-    align-items: center; /* Center the chart vertically if needed */
     width: 100%;
-    height: auto; /* Adjust height automatically */
-    overflow: hidden; /* Prevent overflow */
-    margin: 20px 0; /* Add spacing around the chart */
+    height: auto; /* Make the container fit 80% of the viewport height */
+    display: flex;
+    flex-direction: column; /* Stack screen and seating chart vertically */
+    align-items: center;
+    justify-content: center; /* Center the chart vertically */
+    overflow: hidden; /* Prevent scrolling */
+    margin: 0 auto;
+    box-sizing: border-box;
+    background-color: rgb(60, 60, 60);
 }
 
 .seating-chart {
+    padding: 0;
+    margin:
     display: grid;
-    grid-template-columns: repeat(10, 1fr); /* Fixed 10 seats per row */
-    gap: 10px; /* Add more space between seats */
-    border-radius: 10px; /* Rounded corners for visual appeal */
+    grid-template-columns: repeat(10, 1fr); /* Create 10 columns of equal width */
+    gap: 10px; /* Add spacing between seats */
+    justify-content: center; /* Center the chart horizontally within the container */
+    width: 100%; /* Ensure the chart spans the full width of the container */
+    max-width: 100%; /* Prevent the chart from exceeding the container's width */
+    box-sizing: border-box; /* Include padding and borders in width calculations */
 }
 
 .seat {
@@ -336,15 +344,16 @@ video {
     cursor: not-allowed;
 }
 
-/* Screen Label */
 .screen-label {
-    width: 100%;
-    text-align: center;
-    background-color: white;
-    color: var(--bg-color);
-    font-weight: normal;
-    font-size: 10px;
-    padding: 1px;
-    border-radius: 0px;
-    margin-bottom: 0px;
+    width: 100%; /* Make the screen span the full width of the container */
+    height: 20px; /* Set a fixed height for the screen */
+    background-color: white; /* Keep the background color */
+    color: var(--bg-color, black); /* Adjust text color as needed */
+    font-weight: bold; /* Make the text bold */
+    font-size: 14px; /* Adjust font size */
+    text-align: center; /* Center the text horizontally */
+    line-height: 20px; /* Vertically align text inside the screen */
+    border-radius: 0; /* Remove rounded edges */
+    margin-bottom: 10px; /* Add spacing below the screen */
+    box-sizing: border-box; /* Include padding in the width/height calculations */
 }
