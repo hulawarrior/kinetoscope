@@ -293,3 +293,58 @@ video {
     appearance: none;
     height: 3px; /* Match the progress bar height */
 }
+
+/* Seating Chart */
+.seating-chart-container {
+    display: flex;
+    justify-content: center; /* Center the chart horizontally */
+    align-items: center; /* Center the chart vertically if needed */
+    width: 100%;
+    height: auto; /* Adjust height automatically */
+    overflow: hidden; /* Prevent overflow */
+    margin: 20px 0; /* Add spacing around the chart */
+}
+
+.seating-chart {
+    display: grid;
+    grid-template-columns: repeat(10, 1fr); /* Fixed 10 seats per row */
+    gap: 10px; /* Add more space between seats */
+    border-radius: 10px; /* Rounded corners for visual appeal */
+}
+
+.seat {
+    width: 40px; /* Slightly larger seats */
+    height: 40px;
+    background-color: var(--primary-color);
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 14px; /* Text size for seat numbers */
+    font-weight: normal;
+    color: var(--bg-color);
+}
+
+.seat.selected {
+    background-color: rgb(26, 172, 26);
+    color: white;
+}
+
+.seat.reserved {
+    background-color: red;
+    cursor: not-allowed;
+}
+
+/* Screen Label */
+.screen-label {
+    width: 100%;
+    text-align: center;
+    background-color: white;
+    color: var(--bg-color);
+    font-weight: normal;
+    font-size: 10px;
+    padding: 1px;
+    border-radius: 0px;
+    margin-bottom: 0px;
+}

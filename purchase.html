@@ -3,17 +3,212 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Buy Tickets</title>
+    <title>Select Seats</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="container">
-        <h1>Buy Tickets</h1>
+        <!-- Back Icon -->
+        <p class="now-playing-title">
+            <a href="#" id="back-link" class="now-playing-link">
+                <img src="icons/back-arrow-3.svg" alt="Back Arrow" class="back-arrow-img">
+                Back
+            </a>
+        </p>
+        <script>
+            const params = new URLSearchParams(window.location.search);
+            const filmId = params.get("filmId");
+            const defaultRedirect = "index.html";
+            const redirectUrl = filmId ? `movie.html?filmId=${filmId}` : defaultRedirect;
+        
+            document.getElementById("back-link").setAttribute("href", redirectUrl);
+        </script>
+
+        <p><strong>Movie:</strong> <span id="movie-title">Loading...</span></p>
         <p><strong>Date:</strong> <span id="show-date">Loading...</span></p>
         <p><strong>Time:</strong> <span id="show-time">Loading...</span></p>
-        <p><strong>Location:</strong> <span id="location">Loading...</span></p>
-        <p><strong>Screen:</strong> <span id="screen">Loading...</span></p>
+
+        <!-- Screen Label -->
+        <div class="screen-label">screen</div>
+
+        <!-- Seating Chart -->
+        <div id="seating-chart-container" class="seating-chart-container">
+            <p>Loading seating chart...</p>
+        </div>
+
+        <!-- Continue Button -->
+        <button id="continue-button" class="continue-button" disabled>Continue</button>
     </div>
-    <script src="veezi-api.js"></script>
+
+    <script>
+        const apiKey = "n06hg935gmg68bdv2526wkyjg4";
+        const sessionApiUrl = "https://api.uswest.veezi.com/v1/session";
+        const screenApiUrl = "https://api.uswest.veezi.com/v1/screen";
+        const filmApiUrl = "https://api.uswest.veezi.com/v4/film";
+
+        let selectedSeats = []; // Track selected seats
+
+        // Fetch showtime details
+        async function fetchShowtimeDetails(sessionId) {
+            try {
+                const response = await fetch(`${sessionApiUrl}/${sessionId}`, {
+                    headers: { "VeeziAccessToken": apiKey },
+                });
+
+                if (!response.ok) throw new Error(`Failed to fetch showtime details: ${response.status}`);
+
+                const showtime = await response.json();
+                document.getElementById("show-date").textContent = new Date(showtime.PreShowStartTime).toLocaleDateString();
+                document.getElementById("show-time").textContent = new Date(showtime.PreShowStartTime).toLocaleTimeString([], {
+                    hour: 'numeric',
+                    minute: '2-digit',
+                    hour12: true,
+                });
+
+                // Fetch movie details
+                fetchMovieDetails(showtime.FilmId);
+
+                // Fetch screen details and render seating chart
+                if (showtime.ScreenId) fetchScreenDetails(showtime.ScreenId);
+            } catch (error) {
+                console.error("Error fetching showtime details:", error);
+                document.getElementById("seating-chart-container").innerHTML = `<p>Error loading seating chart.</p>`;
+            }
+        }
+
+        // Fetch screen details and render seating chart
+        async function fetchScreenDetails(screenId) {
+            try {
+                const response = await fetch(`${screenApiUrl}/${screenId}`, {
+                    headers: { "VeeziAccessToken": apiKey },
+                });
+
+                if (!response.ok) throw new Error(`Failed to fetch screen details: ${response.status}`);
+
+                const screen = await response.json();
+
+                if (screen.HasCustomLayout) {
+                    renderSeatingChart(screen);
+                } else {
+                    document.getElementById("seating-chart-container").innerHTML = `<p>This is a general admission screening.</p>`;
+                }
+            } catch (error) {
+                console.error("Error fetching screen details:", error);
+            }
+        }
+
+        // Render seating chart without top labels and with even spacing
+        function renderSeatingChart(screen) {
+            const container = document.getElementById("seating-chart-container");
+            container.innerHTML = "";
+
+            const seatingChart = document.createElement("div");
+            seatingChart.className = "seating-chart";
+
+            const rows = Math.ceil(screen.TotalSeats / 10); // Assuming 10 columns per row
+            let seatNumber = 1;
+
+            for (let row = 0; row < rows; row++) {
+                const rowContainer = document.createElement("div");
+                rowContainer.className = "row";
+
+                // Add seats in the row
+                for (let col = 0; col < 10; col++) {
+                    if (seatNumber > screen.TotalSeats) break; // Stop if all seats are added
+
+                    const seat = document.createElement("div");
+                    seat.className = "seat";
+                    seat.textContent = `${String.fromCharCode(65 + row)}${col + 1}`; // e.g., A1, B2
+
+                    // Mark wheelchair and house seats
+                    if (seatNumber <= screen.WheelChairSeats) seat.classList.add("wheelchair");
+                    else if (seatNumber <= screen.HouseSeats) seat.classList.add("reserved");
+
+                    rowContainer.appendChild(seat);
+
+                    // Click event for seat selection
+                    seat.addEventListener("click", () => {
+                        if (!seat.classList.contains("reserved") && !seat.classList.contains("wheelchair")) {
+                            seat.classList.toggle("selected");
+                            toggleSeatSelection(`${String.fromCharCode(65 + row)}${col + 1}`);
+                        }
+                    });
+
+                    seatNumber++;
+                }
+
+                seatingChart.appendChild(rowContainer);
+            }
+
+            container.appendChild(seatingChart);
+
+            // Scale the seating chart to fit the container
+            scaleSeatingChart(seatingChart);
+        }
+
+        // Dynamically scale the seating chart
+        function scaleSeatingChart(seatingChart) {
+            const containerWidth = document.getElementById("seating-chart-container").offsetWidth;
+            const chartWidth = seatingChart.offsetWidth;
+
+            // Calculate the scaling factor
+            const scaleFactor = containerWidth / chartWidth;
+
+            // Apply the scaling factor
+            seatingChart.style.transform = `scale(${scaleFactor})`;
+        }
+
+        // Recalculate scale on window resize
+        window.addEventListener("resize", () => {
+            const seatingChart = document.querySelector(".seating-chart");
+            if (seatingChart) {
+                scaleSeatingChart(seatingChart);
+            }
+        });
+
+        // Track selected seats and enable "Continue" button
+        function toggleSeatSelection(seatLabel) {
+            const index = selectedSeats.indexOf(seatLabel);
+
+            if (index === -1) {
+                selectedSeats.push(seatLabel); // Add seat
+            } else {
+                selectedSeats.splice(index, 1); // Remove seat
+            }
+
+            // Enable or disable the "Continue" button based on selection
+            document.getElementById("continue-button").disabled = selectedSeats.length === 0;
+        }
+
+        // Fetch movie details
+        async function fetchMovieDetails(filmId) {
+            try {
+                const response = await fetch(`${filmApiUrl}/${filmId}`, {
+                    headers: { "VeeziAccessToken": apiKey },
+                });
+
+                if (!response.ok) throw new Error(`Failed to fetch movie details: ${response.status}`);
+
+                const film = await response.json();
+                document.getElementById("movie-title").textContent = film.Title || "Unknown Movie";
+            } catch (error) {
+                console.error("Error fetching movie details:", error);
+            }
+        }
+
+        // Initialize the page
+        document.addEventListener("DOMContentLoaded", () => {
+            const sessionId = new URLSearchParams(window.location.search).get("sessionId");
+
+            if (sessionId) fetchShowtimeDetails(sessionId);
+            else document.getElementById("seating-chart-container").innerHTML = `<p>Invalid session. No sessionId provided.</p>`;
+
+            // Handle "Continue" button click
+            document.getElementById("continue-button").addEventListener("click", () => {
+                alert(`Seats Selected: ${selectedSeats.join(", ")}`);
+                // Add your navigation or booking logic here
+            });
+        });
+    </script>
 </body>
 </html>

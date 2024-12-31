@@ -53,7 +53,38 @@
     <script>
         const apiKey = "n06hg935gmg68bdv2526wkyjg4"; // Your API key
         const filmApiUrl = "https://api.uswest.veezi.com/v4/film";
+        const sessionApiUrl = "https://api.uswest.veezi.com/v1/session";
 
+        async function fetchFilmShowtimes(filmId) {
+            try {
+                console.log("Fetching showtimes for Film ID:", filmId); // Debug log
+
+                const response = await fetch(sessionApiUrl, {
+                    headers: { "VeeziAccessToken": apiKey },
+                });
+
+                console.log("Fetch response:", response); // Debug log
+
+                if (!response.ok) {
+                    console.error(`API Error: ${response.status} ${response.statusText}`);
+                    throw new Error(`Failed to fetch showtimes: ${response.status} ${response.statusText}`);
+                }
+
+                const sessions = await response.json();
+
+                console.log("Sessions from API:", sessions); // Debug log
+
+                const filmSessions = sessions.filter(session => session.FilmId === filmId);
+                console.log("Filtered Film Sessions:", filmSessions); // Debug log
+
+                renderShowtimes(filmSessions);
+
+            } catch (error) {
+                console.error("Error in fetchFilmShowtimes:", error);
+                document.getElementById("date-showtime").innerHTML = `<p>Error loading showtimes. (${error.message})</p>`;
+            }
+        }
+        
         async function fetchMovieDetails(filmId) {
             try {
                 if (!filmId) throw new Error("No filmId provided in URL");
@@ -68,10 +99,16 @@
 
                 const film = await response.json();
 
-                // Update movie details
+                // Log movie details for debugging
+                console.log("Movie Details:", film);
+
+                // Update movie details on the page
                 updateMovieDetails(film);
 
-                // Set up video and progress bar
+                // Fetch and render showtimes for the film
+                fetchFilmShowtimes(filmId);
+
+                // Set up the trailer video player
                 setupVideoPlayer(film.FilmTrailerUrl);
 
             } catch (error) {
@@ -80,42 +117,124 @@
             }
         }
 
+        async function fetchFilmShowtimes(filmId) {
+            try {
+                console.log("Fetching showtimes for Film ID:", filmId); // Debug log
+
+                const response = await fetch(sessionApiUrl, {
+                    headers: { "VeeziAccessToken": apiKey },
+                });
+
+                console.log("Fetch response:", response); // Debug log
+
+                if (!response.ok) {
+                    console.error(`API Error: ${response.status} ${response.statusText}`);
+                    throw new Error(`Failed to fetch showtimes: ${response.status} ${response.statusText}`);
+                }
+
+                const sessions = await response.json();
+
+                console.log("Sessions from API:", sessions); // Debug log
+
+                const filmSessions = sessions.filter(session => session.FilmId === filmId);
+                console.log("Filtered Film Sessions:", filmSessions); // Debug log
+
+                renderShowtimes(filmSessions);
+
+            } catch (error) {
+                console.error("Error in fetchFilmShowtimes:", error);
+                document.getElementById("date-showtime").innerHTML = `<p>Error loading showtimes. (${error.message})</p>`;
+            }
+        }
+
+        function renderShowtimes(showtimes) {
+            const showtimesContainer = document.getElementById("date-showtime");
+            showtimesContainer.innerHTML = ""; // Clear old showtimes
+
+            if (!showtimes.length) {
+                showtimesContainer.innerHTML = "<p>No showtimes available.</p>";
+                return;
+            }
+
+            const now = new Date();
+            const upcomingShowtimes = showtimes
+                .filter(showtime => new Date(showtime.PreShowStartTime) >= now)
+                .sort((a, b) => new Date(a.PreShowStartTime) - new Date(b.PreShowStartTime));
+
+            const showtimesHtml = upcomingShowtimes.map(showtime => {
+                const dateObj = new Date(showtime.PreShowStartTime);
+                const time = dateObj.toLocaleTimeString([], {
+                    hour: "numeric",
+                    minute: "2-digit",
+                    hour12: true,
+                }).toLowerCase();
+
+                const date = dateObj.toLocaleDateString(undefined, {
+                    weekday: "short",
+                    month: "short",
+                    day: "numeric",
+                });
+
+                return `
+                    <p>${date}</p>
+                    <a href="purchase.html?sessionId=${showtime.Id}&filmId=${showtime.FilmId}" class="time-link">${time}</a>
+                `;
+            }).join("");
+
+            showtimesContainer.innerHTML = showtimesHtml;
+        }
+        
         function updateMovieDetails(film) {
+            // Extract director(s)
+            const directors = film.People
+                .filter(person => person.Role === "Director")
+                .map(person => `${person.FirstName} ${person.LastName}`)
+                .join(", ") || "Unknown";
+
+            // Extract starring actors (max 3 actors for brevity)
+            const actors = film.People
+                .filter(person => person.Role === "Actor")
+                .slice(0, 3) // Limit to 3 actors
+                .map(person => `${person.FirstName} ${person.LastName}`)
+                .join(", ") || "Unknown";
+
+            // Format runtime into "2 hr 19 min"
+            const runtime = film.Duration
+                ? `${Math.floor(film.Duration / 60)} hr ${film.Duration % 60} min`
+                : "Unknown";
+
+            // Extract release year
+            const releaseYear = film.OpeningDate
+                ? new Date(film.OpeningDate).getFullYear()
+                : "Unknown";
+
+            // Update HTML
             document.getElementById("movie-title").textContent = film.Title || "Unknown Title";
             document.getElementById("movie-synopsis").textContent = film.Synopsis || "No synopsis available.";
             document.getElementById("movie-details").innerHTML = `
-                <p>Director: ${
-                    film.People.filter(person => person.Role === "Director")
-                        .map(person => `${person.FirstName} ${person.LastName}`)
-                        .join(", ") || "Unknown"
-                }</p>
-                <p>Runtime: ${film.Duration || "Unknown"} minutes</p>
+                <p>Director: ${directors}</p>
+                <p>Starring: ${actors}</p>
+                <p>Release Year: ${releaseYear}</p>
                 <p>Rating: ${film.Rating || "Not Rated"}</p>
+                <p>Runtime: ${runtime}</p>
+
             `;
         }
 
         function setupVideoPlayer(trailerUrl) {
             const trailerVideo = document.getElementById("trailer-video");
             const playButtonOverlay = document.getElementById("play-button-overlay");
-            const videoProgressContainer = document.getElementById("video-progress-container");
-            const videoProgressBar = document.getElementById("video-progress-bar");
 
             if (trailerUrl) {
+                console.log("Setting trailer URL:", trailerUrl); // Debugging
                 trailerVideo.querySelector("source").src = trailerUrl;
                 trailerVideo.load();
-
-                // Initialize scrubbing
-                setupScrubbing(trailerVideo, videoProgressContainer, videoProgressBar);
-
-                // Initialize auto-hide for progress bar
-                setupAutoHideProgressBar(trailerVideo, videoProgressContainer);
 
                 // Play button click handler
                 playButtonOverlay.addEventListener("click", () => {
                     playButtonOverlay.style.display = "none";
                     trailerVideo.muted = false;
                     trailerVideo.play();
-                    videoProgressContainer.style.display = "block";
                 });
 
                 // Toggle play/pause when clicking the video
@@ -136,24 +255,10 @@
                 trailerVideo.addEventListener("play", () => {
                     playButtonOverlay.style.display = "none";
                 });
-
-                trailerVideo.addEventListener("timeupdate", () => {
-                    if (!isNaN(trailerVideo.duration)) {
-                        const progress = (trailerVideo.currentTime / trailerVideo.duration) * 100;
-                        videoProgressBar.style.width = `${progress}%`;
-
-                        if (progress >= 100) {
-                            videoProgressBar.style.borderTopRightRadius = "0px";
-                            videoProgressBar.style.borderBottomRightRadius = "0px";
-                        } else {
-                            videoProgressBar.style.borderTopRightRadius = "5px";
-                            videoProgressBar.style.borderBottomRightRadius = "5px";
-                        }
-                    }
-                });
             } else {
-                console.log("Trailer URL not available");
-                document.querySelector(".movie-poster-container").innerHTML = `<p>Trailer not available.</p>`;
+                console.error("No trailer URL provided");
+                document.querySelector(".movie-poster-container").innerHTML = `
+                    <p>Trailer not available for this movie.</p>`;
             }
         }
 
@@ -194,6 +299,62 @@
                 document.addEventListener("touchend", onTouchEnd);
             });
         }
+
+        function setupPressAndHoldScrubbing(videoElement, progressBarContainer, progressBar) {
+            let isHolding = false;
+            let holdTimeout;
+
+            const handleScrub = (clientX) => {
+                const rect = progressBarContainer.getBoundingClientRect();
+                const offsetX = clientX - rect.left;
+                const width = rect.width;
+                const scrubTime = (offsetX / width) * videoElement.duration;
+
+                videoElement.currentTime = Math.max(0, Math.min(scrubTime, videoElement.duration));
+                const progress = (videoElement.currentTime / videoElement.duration) * 100;
+                progressBar.style.width = `${progress}%`;
+            };
+
+            const startHold = (e) => {
+                holdTimeout = setTimeout(() => {
+                    isHolding = true;
+                    progressBarContainer.style.pointerEvents = "auto"; // Enable interaction
+                    if (e.type === "touchstart") {
+                        handleScrub(e.touches[0].clientX);
+                    } else {
+                        handleScrub(e.clientX);
+                    }
+                }, 500); // Adjust the duration of the hold
+            };
+
+            const stopHold = () => {
+                clearTimeout(holdTimeout);
+                isHolding = false;
+            };
+
+            videoElement.addEventListener("touchstart", startHold);
+            videoElement.addEventListener("mousedown", startHold);
+
+            videoElement.addEventListener("touchmove", (e) => {
+                if (isHolding) handleScrub(e.touches[0].clientX);
+            });
+
+            videoElement.addEventListener("mousemove", (e) => {
+                if (isHolding) handleScrub(e.clientX);
+            });
+
+            videoElement.addEventListener("touchend", stopHold);
+            videoElement.addEventListener("mouseup", stopHold);
+            videoElement.addEventListener("mouseleave", stopHold);
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const trailerVideo = document.getElementById("trailer-video");
+            const videoProgressContainer = document.getElementById("video-progress-container");
+            const videoProgressBar = document.getElementById("video-progress-bar");
+
+            setupPressAndHoldScrubbing(trailerVideo, videoProgressContainer, videoProgressBar);
+        });
 
         function setupAutoHideProgressBar(trailerVideo, videoProgressContainer) {
             // Function to hide the progress bar
