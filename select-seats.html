@@ -45,6 +45,11 @@
             <div class="screen-label">screen</div>
             <p>Loading seating chart...</p>
         </div>
+        
+        <!-- Add this inside the container, below the seating chart container -->
+        <div id="payment-container" style="display: none; text-align: center;">
+            <button id="apple-pay-button" class="apple-pay-button">Pay with Apple Pay</button>
+        </div>
     </div>
 
     <script>
@@ -271,8 +276,14 @@
             // Handle "Continue" button click
             document.getElementById("continue-button").addEventListener("click", () => {
                 if (selectedSeats.length > 0) {
-                    const selectedSeatsParam = selectedSeats.join(","); // Pass selected seats as query parameter
-                    window.location.href = `payment.html?seats=${encodeURIComponent(selectedSeatsParam)}`;
+                    // Hide the seating chart
+                    document.getElementById("seating-chart-container").style.display = "none";
+
+                    // Hide the "Continue" button
+                    document.getElementById("continue-button").style.display = "none";
+
+                    // Show the Apple Pay button
+                    document.getElementById("payment-container").style.display = "block";
                 } else {
                     alert("Please select at least one seat before continuing.");
                 }
@@ -281,7 +292,19 @@
 
         document.getElementById("back-link").addEventListener("click", (event) => {
             event.preventDefault(); // Prevent default link behavior
-            if (window.history.length > 1) {
+
+            // Check if the payment options are currently displayed
+            const paymentContainer = document.getElementById("payment-container");
+            if (paymentContainer.style.display === "block") {
+                // Hide payment options
+                paymentContainer.style.display = "none";
+
+                // Show the seating chart
+                document.getElementById("seating-chart-container").style.display = "block";
+
+                // Show the "Continue" button
+                document.getElementById("continue-button").style.display = "block";
+            } else if (window.history.length > 1) {
                 // Navigate to the previous page if history exists
                 window.history.back();
             } else {
