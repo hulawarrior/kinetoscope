@@ -404,6 +404,9 @@ video {
     margin: 0 auto;
     box-sizing: border-box;
     background-color: rgb(60, 60, 60);
+    overflow: hidden; /* Prevent content from overflowing */
+    position: relative; /* Needed for transformations */
+    touch-action: none; /* Prevent default pinch-zooming behavior */
 }
 
 .seating-chart {
@@ -413,6 +416,9 @@ video {
     grid-row-gap: 20px; /* Space between rows, greater than columns */
     justify-items: center; /* Center items within each cell */
     align-items: center; /* Center items vertically */
+    transform-origin: center center; /* Set the origin for scaling */
+    transform: scale(1); /* Default scale */
+    transition: transform 0.2s ease; /* Smooth scaling */
 }
 
 .seat {

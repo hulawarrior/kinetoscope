@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
     <title>Select Seats</title>
     <link rel="stylesheet" href="style.css">
 </head>
@@ -317,6 +317,58 @@
                 }
             }
         });
+
+        const seatingChartContainer = document.querySelector('.seating-chart-container');
+            const seatingChart = document.querySelector('.seating-chart');
+
+            let scale = 1; // Initial zoom level
+            const minScale = 1; // Minimum zoom level
+            const maxScale = 3; // Maximum zoom level
+
+            // Handle pinch and wheel zoom
+            seatingChartContainer.addEventListener('wheel', (event) => {
+                event.preventDefault();
+
+                // Adjust scale based on the wheel delta
+                scale += event.deltaY * -0.01;
+
+                // Constrain scale to the min and max limits
+                scale = Math.min(Math.max(minScale, scale), maxScale);
+
+                // Apply the scale transformation
+                seatingChart.style.transform = `scale(${scale})`;
+            });
+
+            // Handle pinch zoom for touch devices
+            let lastTouchDistance = 0;
+
+            seatingChartContainer.addEventListener('touchmove', (event) => {
+                if (event.touches.length === 2) {
+                    event.preventDefault();
+
+                    const touch1 = event.touches[0];
+                    const touch2 = event.touches[1];
+
+                    // Calculate the distance between the two touches
+                    const currentTouchDistance = Math.hypot(
+                        touch2.clientX - touch1.clientX,
+                        touch2.clientY - touch1.clientY
+                    );
+
+                    if (lastTouchDistance) {
+                        // Adjust scale based on the change in touch distance
+                        scale += (currentTouchDistance - lastTouchDistance) * 0.005;
+                        scale = Math.min(Math.max(minScale, scale), maxScale);
+                        seatingChart.style.transform = `scale(${scale})`;
+                    }
+
+                    lastTouchDistance = currentTouchDistance;
+                }
+            });
+
+            seatingChartContainer.addEventListener('touchend', () => {
+                lastTouchDistance = 0; // Reset touch distance when touches end
+            });
     </script>
 </body>
 </html>
