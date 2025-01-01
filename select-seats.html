@@ -268,28 +268,18 @@
                     timeLeft--;
                 } else {
                     clearInterval(timerInterval);
-                    alert("Time is up! Please select your seats quickly.");
+
+                    // Redirect to the previous page when the timer runs out
+                    if (window.history.length > 1) {
+                        window.history.back();
+                    } else {
+                        window.location.href = "index.html"; // Fallback to the index page
+                    }
                 }
             }
 
             const timerInterval = setInterval(updateTimer, 1000);
             updateTimer(); // Initialize the display immediately
-
-            // Handle "Continue" button click
-            document.getElementById("continue-button").addEventListener("click", () => {
-                if (selectedSeats.length > 0) {
-                    // Hide the seating chart
-                    document.getElementById("seating-chart-container").style.display = "none";
-
-                    // Hide the "Continue" button
-                    document.getElementById("continue-button").style.display = "none";
-
-                    // Show the Apple Pay button
-                    document.getElementById("payment-container").style.display = "block";
-                } else {
-                    alert("Please select at least one seat before continuing.");
-                }
-            });
         });
 
         document.getElementById("back-link").addEventListener("click", (event) => {
