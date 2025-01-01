@@ -404,9 +404,8 @@ video {
     margin: 0 auto;
     box-sizing: border-box;
     background-color: rgb(60, 60, 60);
-    overflow: hidden; /* Prevent content from overflowing */
     position: relative; /* Needed for transformations */
-    touch-action: none; /* Prevent default pinch-zooming behavior */
+    touch-action: pan-x pan-y; /* Allow pinch-zoom while disabling page scrolling */
 }
 
 .seating-chart {
