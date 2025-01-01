@@ -407,15 +407,12 @@ video {
 }
 
 .seating-chart {
-    padding: 0;
-    margin:
     display: grid;
-    grid-template-columns: repeat(10, 1fr); /* Create 10 columns of equal width */
-    gap: 10px; /* Add spacing between seats */
-    justify-content: center; /* Center the chart horizontally within the container */
-    width: 100%; /* Ensure the chart spans the full width of the container */
-    max-width: 100%; /* Prevent the chart from exceeding the container's width */
-    box-sizing: border-box; /* Include padding and borders in width calculations */
+    grid-template-columns: repeat(10, 1fr); /* 10 seats per row */
+    grid-column-gap: 10px; /* Space between columns */
+    grid-row-gap: 20px; /* Space between rows, greater than columns */
+    justify-items: center; /* Center items within each cell */
+    align-items: center; /* Center items vertically */
 }
 
 .seat {
@@ -451,6 +448,6 @@ video {
     text-align: center; /* Center the text horizontally */
     line-height: 20px; /* Vertically align text inside the screen */
     border-radius: 0; /* Remove rounded edges */
-    margin-bottom: 10px; /* Add spacing below the screen */
+    margin-bottom: 90px; /* Add spacing below the screen */
     box-sizing: border-box; /* Include padding in the width/height calculations */
 }

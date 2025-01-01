@@ -46,9 +46,11 @@
             <p>Loading seating chart...</p>
         </div>
         
-        <!-- Add this inside the container, below the seating chart container -->
+        <!-- Payment Container -->
         <div id="payment-container" style="display: none; text-align: center;">
-            <button id="apple-pay-button" class="apple-pay-button">Pay with Apple Pay</button>
+            <button id="apple-pay-button" class="payment-button">Pay with Apple Pay</button>
+            <button id="paypal-button" class="payment-button">Pay with PayPal</button>
+            <button id="credit-card-button" class="payment-button">Pay with Credit Card</button>
         </div>
     </div>
 
@@ -293,23 +295,26 @@
         document.getElementById("back-link").addEventListener("click", (event) => {
             event.preventDefault(); // Prevent default link behavior
 
-            // Check if the payment options are currently displayed
             const paymentContainer = document.getElementById("payment-container");
+            const seatingChartContainer = document.getElementById("seating-chart-container");
+
             if (paymentContainer.style.display === "block") {
-                // Hide payment options
+                // If the user is on the payment screen, hide the payment options and show the seating chart
                 paymentContainer.style.display = "none";
-
-                // Show the seating chart
-                document.getElementById("seating-chart-container").style.display = "block";
-
-                // Show the "Continue" button
-                document.getElementById("continue-button").style.display = "block";
-            } else if (window.history.length > 1) {
-                // Navigate to the previous page if history exists
-                window.history.back();
+                seatingChartContainer.style.display = "block";
+                document.getElementById("continue-button").style.display = "block"; // Show the "Continue" button
             } else {
-                // Fallback to a default page if no history
-                window.location.href = "index.html";
+                // If the user is not on the payment screen, show the confirmation message
+                const isLeavingCheckout = confirm("Are you sure you want to leave checkout?");
+                if (isLeavingCheckout) {
+                    if (window.history.length > 1) {
+                        // Navigate to the previous page if history exists
+                        window.history.back();
+                    } else {
+                        // Fallback to a default page if no history
+                        window.location.href = "index.html";
+                    }
+                }
             }
         });
     </script>
