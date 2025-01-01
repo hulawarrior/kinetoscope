@@ -37,7 +37,7 @@
         </div>
     
         <!-- Continue Button -->
-        <button id="continue-button" class="continue-button" disabled>Continue</button>
+        <button id="continue-button" class="continue-button" disabled>continue</button>
     
         <!-- Seating Chart Container -->
         <div id="seating-chart-container" class="seating-chart-container">
@@ -186,9 +186,14 @@
             seatingChart.style.transformOrigin = "top center"; // Scale from the top-center
         }
 
-        // Track selected seats and enable "Continue" button
         function toggleSeatSelection(seatLabel) {
             const index = selectedSeats.indexOf(seatLabel);
+
+            // Check if adding a new seat exceeds the limit
+            if (index === -1 && selectedSeats.length >= 4) {
+                alert("You can only select up to 4 seats.");
+                return; // Exit the function without toggling the seat
+            }
 
             if (index === -1) {
                 selectedSeats.push(seatLabel); // Add seat
@@ -272,6 +277,17 @@
                     alert("Please select at least one seat before continuing.");
                 }
             });
+        });
+
+        document.getElementById("back-link").addEventListener("click", (event) => {
+            event.preventDefault(); // Prevent default link behavior
+            if (window.history.length > 1) {
+                // Navigate to the previous page if history exists
+                window.history.back();
+            } else {
+                // Fallback to a default page if no history
+                window.location.href = "index.html";
+            }
         });
     </script>
 </body>

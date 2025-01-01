@@ -169,12 +169,22 @@ video {
 
 
 /*MOVIE INFO*/
+.now-playing-title {
+    display: flex; /* Flexbox for layout */
+    align-items: center; /* Vertically align arrow and text */
+    justify-content: flex-start; /* Align everything to the left */
+    width: 100%; /* Ensure it spans the container width */
+    padding: 0 10px; /* Optional: Adjust left/right padding */
+    margin: 0; /* Remove any default margins */
+    text-align: left; /* Ensure text is aligned to the left */
+}
+
 .now-playing-link {
-    margin-top: var(--now-playing-top-margin);
+    display: inline-flex; /* Keep the arrow and text inline */
+    align-items: center; /* Vertically align the text and arrow */
+    gap: 5px; /* Add spacing between the arrow and text */
     text-decoration: none; /* Remove underline from the link */
-    color: var(--primary-color); /* Match the text color to your theme */
-    display: flex; /* Use flexbox to align the arrow and text */
-    align-items: center; /* Center the arrow and text vertically */
+    color: var(--primary-color); /* Match your text theme */
 }
 
 .back-arrow-img {
@@ -347,9 +357,10 @@ video {
 /* Countdown Timer Container */
 .countdown-timer-container {
     width: 100%; /* Full width of the screen */
+    align-items: center;
     background-color: #004c9e; /* Dark background color for the rectangle */
     color: #fff; /* White text for contrast */
-    padding: 7px 0; /* Vertical padding inside the rectangle */
+    padding: 10px 0; /* Vertical padding inside the rectangle */
     box-sizing: border-box; /* Include padding in width calculations */
     text-align: center; /* Center the text horizontally */
 }
@@ -359,6 +370,27 @@ video {
     display: flex; /* Flexbox for vertical centering */
     justify-content: center; /* Center content horizontally */
     align-items: center; /* Center content vertically */
+}
+
+.continue-button {
+    display: inline-block; /* Make the button fit the text width */
+    width: auto; /* Ensure the width adjusts to the text content */
+    padding: var(--button-padding); /* Add padding for consistent spacing */
+    margin: 10px auto; /* Center the button and add margin around it */
+    background-color: var(--secondary-color); /* Button background color */
+    color: var(--bg-color); /* Text color */
+    font-size: var(--button-font-size); /* Font size for readability */
+    font-weight: var(--body-text-weight); /* Normal font weight */
+    border-radius: var(--corner-button-radius); /* Rounded corners for better design */
+    text-align: center; /* Center align the text inside the button */
+    border: none; /* Remove any default borders */
+    cursor: pointer; /* Change cursor to pointer for better user experience */
+}
+
+.continue-button:disabled {
+    background-color: #cccccc; /* Grey background for disabled state */
+    color: #666666; /* Light grey text */
+    cursor: not-allowed; /* Disable pointer interaction */
 }
 
 .seating-chart-container {
